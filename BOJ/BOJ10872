@@ -1,0 +1,28 @@
+// https://blog.naver.com/kimh0429/221177964669
+
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+
+
+int Factorial(int n) {
+
+	if (n == 0) return 1;
+	
+	else {
+		
+		return n * Factorial(n - 1);
+
+	}
+	
+}
+
+int main() {
+	
+	int n;
+
+	scanf("%d", &n);
+	printf("%d\n", Factorial(n));
+
+}
