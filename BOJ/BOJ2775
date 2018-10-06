@@ -1,0 +1,34 @@
+// https://blog.naver.com/kimh0429/221156317386
+
+#include <iostream>
+
+using namespace std;
+
+
+
+int main() {
+
+	int t, n, k;
+	int apart[15][15];
+
+
+	for (int i = 1; i <= 14; i++) {
+		apart[0][i] = i;
+		apart[i][1] = 1;
+	}
+
+	for (int i = 1; i <= 14; i++) {
+
+		for (int j = 2; j <= 14; j++) {
+			apart[i][j] = apart[i][j - 1] + apart[i - 1][j];
+		}
+	}
+
+	cin >> t;
+
+	for (int i = 0; i < t; i++) {
+		cin >> k >> n;
+		cout << apart[k][n] << endl;
+	}
+
+}
