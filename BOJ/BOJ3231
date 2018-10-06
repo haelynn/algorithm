@@ -1,0 +1,32 @@
+/ https://blog.naver.com/kimh0429/221191089407
+
+#include <iostream>
+
+using namespace std;
+
+int arr[100001];
+int idx[100001];
+
+int main() {
+
+	int n;
+	cin >> n;
+
+	int k = 0;
+
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
+
+		idx[arr[i] - 1] = k;
+		k++;
+	} 
+
+	k = 0;
+
+	for (int i = 0; i < n; i++) {
+		
+		if (idx[i] > idx[i + 1]) k++;
+	}
+
+	cout << k - 1<< "\n";
+}
