@@ -1,0 +1,37 @@
+// https://blog.naver.com/kimh0429/221162444988
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+
+	int n, result = -1;
+	bool check = false;
+
+	cin >> n;
+
+	if (n == 3) {
+		result = 1;
+	}
+	
+	for (int i = 1; i <= n / 5; i++) {
+		
+		int temp = n - (i * 5);
+
+		if (temp % 3 == 0 && result == -1) {
+			result = i + (temp / 3);
+		}
+
+		else if (temp % 3 == 0 && result != -1) {
+			result = min(result, i + (temp / 3));
+		}
+	}
+
+	if (result == -1 && n % 3 == 0) {
+		result = n / 3;
+	}
+
+	cout << result << "\n";
+}
