@@ -1,0 +1,64 @@
+// https://blog.naver.com/kimh0429/221183729192
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int n, m;
+int boxSize;
+int box[50][50] = {-1, };
+int res = 1, width = 2;
+
+void Program(int y, int x, int w) {
+
+	if (y + w - 1 >= n || x + w - 1 >= m) return;
+	else if (w != 2 && w > boxSize) return;
+	else {
+
+		int dy[3] = { y, y + w - 1, y + w - 1 };
+		int dx[3] = { x + w - 1, x, x + w - 1 };
+		int tmp = box[y][x];
+		bool flag = true;
+
+		for (int i = 0; i < 3; i++) {
+
+			if (tmp != box[dy[i]][dx[i]]) {
+				flag = false;
+			}
+		}
+
+		if (flag) {
+			res = max(res, w);
+			width = res;
+		} 
+
+		Program(y, x, w + 1);
+	}
+}
+
+int main() {
+
+	cin >> n >> m;
+
+	boxSize = min(n, m);
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+
+			char tmp;
+			cin >> tmp;
+
+			box[i][j] = tmp - 48;
+		}
+	}
+
+	for (int i = 0; i < n - 1; i++) {
+		for (int j = 0; j < m - 1; j++) {
+			Program(i, j, width);
+		}
+	}
+
+	cout << res * res << "\n";
+
+}
