@@ -1,0 +1,42 @@
+// https://blog.naver.com/kimh0429/221191060926
+
+#include <iostream>
+
+using namespace std;
+
+char arr[51];
+int n;
+
+int CupCnt() {
+
+	int cnt = 1;
+	bool flag = true;
+
+	for (int i = 0; i < n; i++) {
+		
+		if (arr[i] == 'S') cnt++;
+		else {
+			cnt++;
+			i++; // LL을 하나의 좌석으로 취급
+		}
+	}
+
+	return cnt;
+}
+
+int main() {
+
+	cin >> n;
+
+	for (int i = 0; i < n; i++) cin >> arr[i];
+
+	int tmp = CupCnt(); // 컵홀더 수
+
+	if (tmp >= n) cout << n << "\n";
+	else if (tmp < n) {
+		tmp = n - tmp;
+		cout << n - tmp << "\n";
+	}
+
+
+}
