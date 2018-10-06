@@ -1,0 +1,70 @@
+// https://blog.naver.com/kimh0429/221196493937
+
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+int ranking[1001];
+int idx[1001];
+vector< vector<int> > v;
+
+int main() {
+
+	int n, m;
+	queue<int> q;
+
+	cin >> n >> m;
+
+	v.resize(1002);
+
+
+	for (int i = 0; i < m; i++) {
+		int s, edge, tmp;
+		cin >> s;
+
+		cin >> edge;
+
+		for (int j = 1; j < s; j++) {
+
+			cin >> tmp;
+			v[edge].push_back(tmp);
+			idx[tmp]++;
+
+			edge = tmp;
+		}
+	}
+
+
+	for (int i = 1; i <= n; i++) {
+		if (idx[i] == 0) {
+			q.push(i);
+		}
+	}
+
+	for (int k = 0; k < n; k++) {
+
+		if (q.empty()) {
+			printf("%d\n", 0);
+			return 0;
+		}
+
+		int node = q.front();
+		q.pop();
+
+		ranking[k] = node;
+
+		for (int i = 0; i < v[node].size(); i++) {
+			int node2 = v[node][i];
+
+			if (--idx[node2] == 0) {
+				q.push(node2);
+			}
+		}
+	}
+
+	for (int i = 0; i < n; i++)
+		cout << ranking[i] << "\n";
+
+}
