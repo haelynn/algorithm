@@ -1,0 +1,64 @@
+// https://blog.naver.com/kimh0429/221167091860
+
+#include <iostream>
+#include <queue>
+#include <math.h>
+
+using namespace std;
+
+int n, k;
+bool checked[100001] = {false};
+
+int BFS() {
+	
+	int count = 0;
+	queue <int> bfs;
+
+	bfs.push(n);
+	checked[n] = true;
+
+	if (n == k) return count;
+
+
+	while (!bfs.empty()) {
+
+		count++;
+		int size = bfs.size();
+
+		for (int i = 0; i < size; i++) {
+			
+			int front = bfs.front();
+			bfs.pop();
+
+			if (front - 1 >= 0 && !checked[front - 1]) {
+				bfs.push(front - 1);
+				checked[front - 1] = true;
+			}
+
+			if (front + 1 <= 100000 && !checked[front + 1]) {
+				bfs.push(front + 1);
+				checked[front + 1] = true;
+			}
+
+			if (front * 2 <= 100000 && !checked[front * 2]) {
+				bfs.push(front * 2);
+				checked[front * 2] = true;
+			}
+
+			if (checked[k]) {
+				return count;
+			}
+		}
+
+	}
+
+	return count;
+
+}
+
+int main() {
+
+	cin >> n >> k;
+
+	cout << BFS() << "\n";
+}
