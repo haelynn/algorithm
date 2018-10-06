@@ -1,0 +1,27 @@
+// https://blog.naver.com/kimh0429/221164129479
+
+#include <iostream>
+
+using namespace std;
+
+int main() {
+
+	int n, t, count = 0, sum = 0;
+	int nArr[51];
+
+	cin >> n >> t;
+
+	for (int i = 0; i<n; i++) {
+		cin >> nArr[i];
+	}
+
+	for (int i = 0; i<n; i++) {
+		if (sum + nArr[i] > t) break;
+
+		count = i + 1;
+		sum += nArr[i];
+	}
+
+	cout << count << "\n";
+
+}
