@@ -1,0 +1,51 @@
+// https://blog.naver.com/kimh0429/221180803466
+
+#include <iostream>
+
+using namespace std;
+
+int cnt = 0;
+
+void Han(int n) {
+	
+	if (n < 100) {
+		for (int i = 1; i <= n; i++) {
+			cnt += 1;
+		}
+
+		return;
+	}
+
+	if (n >= 100 && n < 111) {
+		cnt += 99;
+		return;
+	}
+
+	if (n > 110) {
+		
+		int h, t, o, tmp;
+
+		h = n / 100;
+		t = (n - 100 * h) / 10;
+		o = (n - 100 * h - 10 * t);
+
+		tmp = h - t;
+
+		if (t - o == tmp) {
+			cnt++;
+		}
+		
+		Han(n - 1);
+	}
+}
+
+int main() {
+
+	int n;
+
+	cin >> n;
+
+	Han(n);
+
+	cout << cnt << "\n";
+}
