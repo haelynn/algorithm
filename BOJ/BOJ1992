@@ -1,0 +1,51 @@
+// https://blog.naver.com/kimh0429/221182386118
+
+#include <iostream>
+
+using namespace std;
+
+int quad[65][65];
+int dx[4] = { 0, 0, 1, 1 };
+int dy[4] = { 0, 1, 0, 1 };
+
+void QuadTree(int x, int y, int n) {
+
+	int tmp = quad[x][y];
+
+	for (int i = x; i < x + n; i++) {
+		for (int j = y; j < y + n; j++) {
+			
+			if (tmp != quad[i][j]) {
+				cout << "(";
+				
+				for (int k = 0; k < 4; k++) {
+					QuadTree(x + n / 2 * dx[k], y + n / 2 * dy[k], n / 2);
+				}
+				cout << ")";
+				return;
+			}
+		}
+	}
+
+	cout << tmp;
+}
+
+int main() {
+	
+	int n;
+
+	cin >> n;
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+
+			char tmp;
+			cin >> tmp;
+
+			quad[i][j] = tmp - 48;
+		}
+	}
+
+
+	QuadTree(0, 0, n);
+}
