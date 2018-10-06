@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+#define INF 987654321
+
+int n, m;
+int ans = 987654321;
+int arr[51][51], checked[14] = {0, };
+vector<pair<int, int> > house, chicken;
+
+void DFS(int cnt, int cur){
+
+    if(cur > chicken.size()) return;
+    if(cnt == m){
+
+        int res = 0;
+        for(int i=0; i<house.size(); i++){
+
+            int dist = INF;
+            for(int j=0; j<chicken.size(); j++){
+
+                if(checked[j]){
+                    int hy = house[i].first, hx = house[i].second;
+                    int cy = chicken[j].first, cx = chicken[j].second;
+
+                    int tmp = abs(hy - cy) + abs(hx - cx);
+                    dist = min(tmp, dist);
+                }
+            }
+            res += dist;
+        }
+
+        ans = min(res, ans);
+        return;
+    }
+
+    checked[cur] = 1;
+    DFS(cnt+1, cur+1);
+
+    checked[cur] = 0;
+    DFS(cnt, cur+1);
+
+}
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    cin >> n >> m;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            cin >> arr[i][j];
+
+            if(arr[i][j] == 1) house.push_back({i, j});
+            else if(arr[i][j] == 2) chicken.push_back({i, j});
+        }
+    }
+
+    DFS(0, 0);
+
+    cout << ans << "\n";
+}
