@@ -1,0 +1,82 @@
+// https://blog.naver.com/kimh0429/221196493937
+
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int n, as, bs;
+int arr[21][21];
+bool checked[21];
+int a[11];
+int b[11];
+int res = 100000000;
+
+void MakeScore() {
+	
+	as = 0;
+	bs = 0;
+
+	for (int i = 0; i < n / 2; i++) {
+		for (int j = 0; j < n / 2; j++) {
+			as += arr[a[i]][a[j]];
+			bs += arr[b[i]][b[j]];
+		}
+	}
+}
+
+void MakeTeam(int loc, int cnt) {
+	
+	if (loc == n && cnt == n / 2) {
+
+		int k = 0;
+
+		for (int i= 0; i < n; i++) {
+
+			if (checked[i]) {
+				a[k] = i;
+				k++;
+			}
+		}
+
+		k = 0;
+		for (int i = 0; i < n; i++) {
+			if (!checked[i]) {
+				b[k] = i;
+				k++;
+			}
+		}
+
+		MakeScore();
+		int tmp;
+		if (as > bs) tmp = as - bs;
+		else tmp = bs - as;
+
+		res = min(res, tmp);
+
+	}
+
+	if (loc == n) return;
+
+	checked[loc] = true;
+	MakeTeam(loc + 1, cnt + 1);
+
+	checked[loc] = false;
+	MakeTeam(loc + 1, cnt);
+
+}
+
+int main(){
+
+	cin >> n;
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+			cin >> arr[i][j];
+
+	}
+
+	MakeTeam(0, 0);
+	cout << res << "\n";
+}
