@@ -1,0 +1,60 @@
+// https://blog.naver.com/kimh0429/221185933818
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+char alphabet[21][21];
+bool checked[21][21];
+bool alphabetCheck[26];
+int r, c;
+int dy[4] = { 0, 0, -1, 1 };
+int dx[4] = { -1, 1, 0, 0 };
+
+bool inRange(int y, int x) {
+
+	if (y >= 0 && x >= 0 && y < r && x < c) return true;
+	else return false;
+}
+
+int DFS(int y, int x) {
+
+	int res = 0;
+	checked[y][x] = true;
+	alphabetCheck[alphabet[y][x] - 'A'] = true;
+
+	// cout << alphabet[y][x] - 'A' << "\n";
+
+	for (int i = 0; i < 4; i++) {
+		
+		int nextY = y + dy[i];
+		int nextX = x + dx[i];
+
+		if (inRange(nextY, nextX) && !alphabetCheck[alphabet[nextY][nextX] - 'A']
+			&& !checked[nextY][nextX]) {
+		
+			// cout << nextY << " " << nextX << "\n";
+			res = max(res, DFS(nextY, nextX) + 1);
+		}
+	}
+
+	checked[y][x] = false;
+	alphabetCheck[alphabet[y][x] - 'A'] = false;
+
+	return res;
+}
+
+int main() {
+
+
+	cin >> r >> c;
+
+	for (int i = 0; i < r; i++) {
+		for (int j = 0; j < c; j++) {
+			cin >> alphabet[i][j];
+		}
+	}
+
+	cout << DFS(0, 0) + 1 << "\n";
+}
