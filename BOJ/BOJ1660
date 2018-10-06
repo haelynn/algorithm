@@ -1,0 +1,44 @@
+// https://blog.naver.com/kimh0429/221234886337
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+#define INF 300001
+int bomb[130];
+int dp[300001];
+int idx = 0;
+
+void MakeBomb(int n) {
+
+	int cnt = 0;
+	for (int i = 1; i <= 130; i++) {
+
+		if (cnt > n) break;
+
+		cnt += i * (i + 1) / 2;
+		bomb[i] = cnt;
+		idx++;
+	}
+}
+
+int main() {
+
+	int n;
+	cin >> n;
+
+	MakeBomb(n);
+
+	for (int i = 1; i <= n; i++) dp[i] = INF;
+	
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= idx; j++) {
+			if (bomb[j] > i) break;
+
+			dp[i] = min(dp[i - bomb[j]] + 1, dp[i]);
+		}
+	}
+
+	cout << dp[n] << "\n";
+}
