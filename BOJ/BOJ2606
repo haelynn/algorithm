@@ -1,0 +1,48 @@
+// https://blog.naver.com/kimh0429/221157916839
+
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int com[101][101];
+int checked[101];
+
+int main() {
+
+	int n, k;
+	int v = -1;
+	queue <int> bfs;
+
+	cin >> n >> k;
+
+	for (int i = 1; i <= k; i++) {
+		int a, b;
+
+		cin >> a >> b;
+
+		com[a][b] = 1;
+		com[b][a] = 1;
+	}
+
+	bfs.push(1);
+	checked[1] = 1;
+
+	while (bfs.size() != 0) {
+
+		int front = bfs.front();
+
+		bfs.pop();
+		v++;
+
+		for (int i = 1; i <= n; i++) {
+			
+			if (com[front][i] != 0 && checked[i] == 0) {
+				checked[i] = 1;
+				bfs.push(i);
+			}
+		}
+	}
+
+	cout << v << endl;
+}
