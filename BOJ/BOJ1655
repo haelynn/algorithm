@@ -1,0 +1,45 @@
+// https://blog.naver.com/kimh0429/221207319357
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <functional>
+
+using namespace std;
+
+int main() {
+
+	priority_queue <int, vector<int>, greater<int> > minQ;
+	priority_queue <int> maxQ;
+
+	int n;
+	scanf("%d", &n);
+
+	while (n--) {
+		int tmp;
+		scanf("%d", &tmp);
+
+
+		// 1
+		if (maxQ.empty()) maxQ.push(tmp);
+		else if (maxQ.size() == minQ.size()) maxQ.push(tmp);
+		else minQ.push(tmp);
+
+		// 2
+		if (!maxQ.empty() && !minQ.empty() && !(maxQ.top() <= minQ.top())) {
+			
+			int maxTop = maxQ.top();
+			int minTop = minQ.top();
+
+			maxQ.pop();
+			minQ.pop();
+
+			minQ.push(maxTop);
+			maxQ.push(minTop);
+		}
+
+		printf("%d\n", maxQ.top());
+	}
+
+}
