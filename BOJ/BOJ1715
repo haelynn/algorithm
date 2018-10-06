@@ -1,0 +1,52 @@
+// https://blog.naver.com/kimh0429/221207270753
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <functional>
+
+using namespace std;
+
+int arr[100001];
+
+int main() {
+
+	int n;
+	scanf("%d", &n);
+
+	if (n == 1) {
+		int tmp;
+
+		scanf("%d", &tmp);
+		printf("%d\n", 0);
+
+		return 0;
+	}
+
+	priority_queue <int, vector<int>, greater<int> > q;
+
+	for (int i = 1; i <= n; i++) {
+		int tmp;
+		scanf("%d", &tmp);
+
+		q.push(tmp);
+	}
+
+
+	int res = 0;
+	while (1) {
+		int tmp = 0;
+
+		tmp += q.top(); q.pop();
+		if(!q.empty()) tmp += q.top(); q.pop();
+		res += tmp;
+
+		if (q.empty()) break;
+		
+		q.push(tmp);
+	}
+
+
+	cout << res << "\n";
+}
