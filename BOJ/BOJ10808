@@ -1,0 +1,26 @@
+// https://blog.naver.com/kimh0429/221155524513
+
+import java.util.Arrays;
+import java.util.Scanner;
+import java.lang.*;
+
+public class bj10808 {
+
+	public static void main(String[] args){
+		
+		String s;
+		int alphabet[] = new int[26];
+		Arrays.fill(alphabet, 0);
+		
+		Scanner scan = new Scanner(System.in);
+		s = scan.next();
+
+		for(int i=0; i<s.length(); i++){
+			alphabet[-('a'-s.charAt(i))]++;
+		}
+		
+		for(int i=0; i<26; i++){
+			System.out.print(alphabet[i] + " ");
+		}
+	}
+}
