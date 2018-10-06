@@ -1,0 +1,60 @@
+// https://blog.naver.com/kimh0429/221212560185
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <queue>
+
+using namespace std;
+
+vector <pair <int, int> > v;
+priority_queue <int, vector<int>, greater<int> > pq; // 최소힙
+
+bool comp(pair<int, int> &a, pair<int, int> &b) {
+
+	if(a.second != b.second)
+		return a.second < b.second;
+
+	else return a.first < b.first;
+}
+
+int main() {
+	
+	int n, d;
+	cin >> n;
+
+	v.resize(n + 1);
+
+	int start = 100000001, res = 0;
+
+	for (int i = 1; i <= n; i++) {
+		cin >> v[i].first >> v[i].second; // start, end
+
+		if (v[i].first > v[i].second) swap(v[i].first, v[i].second);
+
+		start = min(start, v[i].first);
+	}
+	
+	sort(v.begin() + 1, v.end(), comp);
+
+	cin >> d;
+
+	if (v[n].second - start <= d) {
+		cout << n << "\n";
+		return 0;
+	}
+
+	// for (int i = 1; i <= n; i++) cout << v[i].first << " " << v[i].second << "\n";
+
+	for (int i = 1; i <= n; i++) {
+		pq.push(v[i].first);
+
+		while (!pq.empty() && pq.top() < v[i].second - d) pq.pop();
+
+		 // cout << i << " " << pq.size() << "\n";
+		res = max(res, (int)pq.size());
+	}
+
+	cout << res << "\n";
+}
