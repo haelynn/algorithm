@@ -1,0 +1,32 @@
+// https://blog.naver.com/kimh0429/221193511953
+
+#include <iostream>
+#include <math.h>
+
+using namespace std;
+
+int main() {
+
+	int mush[10];
+	int sumMush[10];
+	int cnt = -1;
+
+	for (int i = 0; i < 10; i++) {
+
+		cin >> mush[i];
+
+		if (i == 0) sumMush[i] = mush[i];
+		else sumMush[i] = mush[i] + sumMush[i - 1];
+
+		if (sumMush[i] <= 100) cnt++;
+	}
+
+	if (sumMush[cnt] == 100) cout << sumMush[cnt] << "\n";
+	else {
+		int tmp1 = abs(100 - sumMush[cnt]);
+		int tmp2 = abs(100 - sumMush[cnt + 1]);
+
+		if (tmp1 == tmp2) cout << sumMush[cnt + 1] << "\n";
+		else tmp1 > tmp2 ? cout << sumMush[cnt + 1] << "\n" : cout << sumMush[cnt] << "\n";
+	}
+}
