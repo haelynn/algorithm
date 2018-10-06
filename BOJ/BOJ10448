@@ -1,0 +1,53 @@
+// https://blog.naver.com/kimh0429/221196504664
+
+#include <iostream>
+
+using namespace std;
+
+int tri[45];
+
+void TriInit() {
+
+	tri[0] = 1;
+
+	for (int i = 1; i < 45; i++) {
+		tri[i] = tri[i - 1] + i + 1;
+	}
+}
+
+int TriSum(int num) {
+
+	int res = 0;
+
+	for (int i = 0; i < 45; i++) {
+		if (tri[i] > num) break;
+
+		for (int j = 0; j < 45; j++) {
+			if (tri[i] + tri[j] > num) break;
+
+			for (int k = 0; k < 45; k++) {
+
+				if (tri[i] + tri[j] + tri[k] == num) res = 1;
+				if (tri[i] + tri[j] + tri[k] > num) break;
+			}
+		}
+	}
+
+	return res;
+}
+
+int main() {
+
+	TriInit();
+
+	int tc;
+	cin >> tc;
+
+	while (tc--) {
+
+		int k;
+		cin >> k;
+
+		cout << TriSum(k) << "\n";
+	}
+}
