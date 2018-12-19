@@ -1,0 +1,39 @@
+// https://blog.naver.com/kimh0429/221149925726
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    int n;
+    cin >> n;
+
+    int dp[501][501];
+
+    cin >> dp[0][0];
+    int ans = dp[0][0];
+
+    for(int i=1; i<n; i++){
+        for(int j=0; j<=i; j++){
+            int tmp;
+            cin >> tmp;
+
+            if(j==0)
+                dp[i][j] = tmp + dp[i-1][j];
+
+            else if(j==i)
+                dp[i][j] = tmp + dp[i-1][j-1];
+
+            else{
+                dp[i][j] = tmp + max(dp[i-1][j-1], dp[i-1][j]);
+            }
+
+            ans = max(ans, dp[i][j]);
+        }
+    }
+
+    cout << ans << "\n";
+}
