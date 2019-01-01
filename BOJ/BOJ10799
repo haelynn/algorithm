@@ -1,0 +1,35 @@
+// https://blog.naver.com/kimh0429/221432124957
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int main(){
+    string s;
+    cin >> s;
+
+    int ans = 0;
+    vector<int> st;
+
+    for(int i=0; i<s.length(); i++){
+        if(s[i] == '('){
+            if(s[i+1] == ')'){
+                if(st.size() > 0){
+                    for(int j=0; j<st.size(); j++) st[j] += 1;
+                }
+                i++;
+            }
+            else{
+                st.push_back(0);
+            }
+        }
+        else{
+            ans += st[st.size()-1] + 1;
+            st.erase(st.begin()+st.size()-1);
+        }
+    }
+
+    cout << ans << "\n";
+}
