@@ -1,0 +1,102 @@
+// https://blog.naver.com/kimh0429/221432758331
+
+#include <iostream>
+#define TOP 0
+#define LEFT 6
+#define RIGHT 2
+
+using namespace std;
+
+typedef struct Gear{
+    int top = TOP;
+    int left = LEFT;
+    int right = RIGHT;
+    int rota;
+    int g[8];
+}Gear;
+Gear gear[4];
+
+int InRange(int x){
+    if(x == 8) return 0;
+    else if(x == -1) return 7;
+    else return x;
+}
+
+void RotationGear(int idx, int rot, int direction){
+    if(idx > 3 || idx < 0) return;
+
+    rot *= -1;
+    if(direction == 1){
+        if(gear[idx].g[gear[idx].left] != gear[idx-1].g[gear[idx-1].right]){
+            gear[idx].rota = rot;
+            RotationGear(idx+1, rot, direction);
+        }
+    }
+    else if(direction == -1){
+        if(gear[idx].g[gear[idx].right] != gear[idx+1].g[gear[idx+1].left]){
+            gear[idx].rota = rot;
+            RotationGear(idx-1, rot, direction);
+        }
+    }
+}
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    // init
+    for(int i=0; i<4; i++){
+        for(int j=0; j<8; j++){
+            char tmp;
+            cin >> tmp;
+
+            gear[i].g[j] = tmp - '0';
+        }
+    }
+
+    int k;
+    int n, rot;
+
+    cin >> k;
+    for(int i=0; i<k; i++){
+        cin >> n >> rot;
+        n--;
+
+        for(int j=0; j<4; j++)
+            gear[j].rota = 0;
+
+
+        gear[n].rota = rot;
+        if(n == 0){
+            RotationGear(n+1, rot, 1);
+        }
+        else if(n == 3){
+            RotationGear(n-1, rot, -1);
+        }
+        else{
+            RotationGear(n+1, rot, 1);
+            RotationGear(n-1, rot, -1);
+        }
+        // 회전
+
+        for(int j=0; j<4; j++){
+            if(gear[j].rota != 0){
+                int rot = gear[j].rota * -1;
+                gear[j].top = InRange(gear[j].top + rot);
+                gear[j].left = InRange(gear[j].left + rot);
+                gear[j].right = InRange(gear[j].right + rot);
+            }
+        }
+    }
+
+    int score = 0;
+    int sIdx = 1;
+    for(int i=0; i<4; i++){
+        if(gear[i].g[gear[i].top]){
+            score += sIdx;
+        }
+        sIdx *= 2;
+    }
+
+    cout << score << "\n";
+
+}
