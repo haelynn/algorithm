@@ -1,0 +1,81 @@
+// https://blog.naver.com/kimh0429/221433739224
+
+// 22:55
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#define INF 0x7fffffff
+
+using namespace std;
+
+int n, m, ans = INF;
+char arr[1001][1001];
+int visited[1001][1001][2] = {0, };
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < m;
+}
+
+void BFS(){
+
+    queue <pair<int, int> > bfs; // idx
+    queue <int> status;
+
+    bfs.push({0, 0});
+    status.push(0);
+    visited[0][0][0] = 1;
+
+    while(!bfs.empty()){
+        int fy = bfs.front().first;
+        int fx = bfs.front().second;
+        int fs = status.front();
+
+        bfs.pop();
+        status.pop();
+
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(ny == n-1 && nx == m-1){
+                ans = min(visited[fy][fx][fs]+1, ans);
+            }
+            else if(InRange(ny, nx)){
+                if(arr[ny][nx] == '0' && !visited[ny][nx][fs]){
+                    visited[ny][nx][fs] = visited[fy][fx][fs] + 1;
+                    bfs.push({ny, nx});
+                    status.push(fs);
+                }
+                else if(arr[ny][nx] == '1' && fs == 0 && !visited[ny][nx][fs]){
+                    visited[ny][nx][1] = visited[fy][fx][0] + 1;
+                    bfs.push({ny, nx});
+                    status.push(1);
+                }
+            }
+        }
+    }
+}
+
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    cin >> n >> m;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            cin >> arr[i][j];
+        }
+    }
+
+    if(n == 1 && m == 1){
+        cout << 1 << "\n";
+        return 0;
+    }
+
+    BFS();
+
+    if(ans == INF) cout << -1 << "\n";
+    else cout << ans << "\n";
+}
