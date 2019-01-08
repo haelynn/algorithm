@@ -1,0 +1,51 @@
+#include <iostream>
+
+using namespace std;
+
+int arr[100];
+
+void swap(int *a, int *b){
+    int *tmp = a;
+    a = b;
+    b = tmp;
+}
+
+void quickSort(int l, int r){
+
+    if(r <= l) return;
+
+    int i = l;
+    int j = r + 1;
+    int p;
+
+    if(arr[l] > arr[r]) p = r;
+    else p = l;
+
+    if(arr[p] > arr[(r+l)/2]) p = (r+l)/2;
+
+    while(i < j){
+        do{ i++; } while(arr[p] > arr[i] && i <= r);
+        do{ j--; } while(arr[p] < arr[j] && j >= l+1);
+        if(i < j) swap(arr[i], arr[j]);
+    }
+
+    swap(arr[l], arr[j]);
+    quickSort(l, j-1);
+    quickSort(j+1, r);
+}
+
+int main(){
+
+    int n;
+    cin >> n;
+
+    for(int i=0; i<n; i++){
+        cin >> arr[i];
+    }
+
+    quickSort(0, n-1);
+
+    for(int i=0; i<n; i++)
+        cout << arr[i] << " ";
+    cout << "\n";
+}
