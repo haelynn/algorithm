@@ -18,11 +18,12 @@ void quickSort(int l, int r){
     int j = r + 1;
     int p;
 
-    if(arr[l] > arr[r]) p = r;
-    else p = l;
+    if(arr[l] > arr[r]) p = l;
+    else p = r;
 
     if(arr[p] > arr[(r+l)/2]) p = (r+l)/2;
 
+    swap(arr[l], arr[p]);
     while(i < j){
         do{ i++; } while(arr[p] > arr[i] && i <= r);
         do{ j--; } while(arr[p] < arr[j] && j >= l+1);
@@ -48,4 +49,5 @@ int main(){
     for(int i=0; i<n; i++)
         cout << arr[i] << " ";
     cout << "\n";
+
 }
