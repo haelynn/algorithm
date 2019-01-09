@@ -1,0 +1,90 @@
+#include <iostream>
+#define MOD 10
+#define HASH_KEY(key) key%MOD
+
+using namespace std;
+
+typedef struct Node{
+    int id;
+    Node* hashNext;
+};
+Node* hashTable[MOD];
+
+void AddHashData(int key, Node* node){
+
+    int hashKey = HASH_KEY(key);
+    if(hashTable[hashKey] == NULL)
+        hashTable[hashKey] = node;
+    else{
+        node->hashNext = hashTable[hashKey];
+        hashTable[hashKey] = node;
+    }
+}
+
+void DelHashData(int id){
+
+    int hashKey = HASH_KEY(id);
+    if(hashTable[hashKey] == NULL) return;
+
+    Node *delNode = NULL;
+    if(hashTable[hashKey] -> id == id){
+        delNode = hashTable[hashKey];
+        hashTable[hashKey] = hashTable[hashKey] -> hashNext;
+    }
+    else{
+        Node *node = hashTable[hashKey];
+        Node *next = node -> hashNext;
+        while(next){
+            if(next->id == id){
+                node->hashNext = next->hashNext;
+                delNode = next;
+                break;
+            }
+            node = next;
+            next = node->hashNext;
+        }
+    }
+
+    free(delNode);
+}
+
+Node* FindHashData(int id){
+
+    int hashKey = HASH_KEY(id);
+    if(hashTable[hashKey] == NULL) return NULL;
+
+    if(hashTable[hashKey] -> id == id){
+        return hashTable[hashKey];
+    }
+    else{
+        Node *node = hashTable[hashKey];
+        while(node -> hashNext){
+            if(node -> hashNext -> id == id){
+                return node->hashNext;
+            }
+            node = node->hashNext;
+        }
+    }
+    return NULL;
+}
+
+void PrintAllHashData(){
+    cout << "### Print All Hash Data ###\n";
+    for(int i=0; i<MOD; i++){
+        cout << "idx : " << i << "\n";
+
+        if(hashTable[i] != NULL){
+            Node *node = hashTable[i];
+            while(node -> hashNext){
+                cout << node->id << " ";
+                node = node->hashNext;
+            }
+            cout << node -> id << "\n";
+        }
+    }
+    cout << "\n";
+}
+
+int main(){
+
+}
