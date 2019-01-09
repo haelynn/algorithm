@@ -1,0 +1,29 @@
+// https://blog.naver.com/kimh0429/221438100935
+
+#include <iostream>
+
+using namespace std;
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    int T;
+    cin >> T;
+
+    long long dp[101] = {0, };
+
+    dp[1] = 1;
+    dp[2] = 1;
+    dp[3] = 1;
+
+    for(int i=4; i<=100; i++){
+        dp[i] = dp[i-2] + dp[i-3];
+    }
+
+    for(int t=0; t<T; t++){
+        int n;
+        cin >> n;
+
+        cout << dp[n] << "\n";
+    }
+}
