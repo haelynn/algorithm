@@ -1,0 +1,176 @@
+// https://blog.naver.com/kimh0429/221438318148
+
+#include <iostream>
+#include <algorithm>
+#define mod 100007
+
+using namespace std;
+
+int n;
+char arr[1000008][6];
+
+typedef struct Node{
+    int id;
+    char name[7];
+    Node* nextHash;
+
+    Node(char *s, int key){
+        id = key;
+        nextHash = NULL;
+        int i;
+        for(i=0; s[i]; i++)
+            name[i] = s[i];
+        name[i] = 0;
+    }
+
+}Node;
+Node* hashTable[mod];
+
+int MyHash(char *str){
+
+    int ret = 0;
+    for(int i=0, k=1; str[i]; i++){
+        ret = (ret + k * str[i]) % mod;
+        k = (k * 17) % mod;
+    }
+
+    return ret;
+}
+
+bool CompareChar(char *a, char *b){
+
+    for(int i=0; a[i] || b[i]; i++){
+        if(a[i] != b[i]) return false;
+    }
+    return true;
+}
+
+void AddHashTable(Node *node, int hashKey){
+
+    if(hashTable[hashKey] == NULL){
+        hashTable[hashKey] = node;
+    }
+    else{
+        node -> nextHash = hashTable[hashKey];
+        hashTable[hashKey] = node;
+    }
+}
+
+void DelHashTable(int hashKey, char *s){
+
+    if(hashTable[hashKey] == NULL) return;
+
+    Node *delNode = NULL;
+    if(hashTable[hashKey] -> id == hashKey && CompareChar(hashTable[hashKey] -> name, s)){
+        delNode = hashTable[hashKey];
+        hashTable[hashKey] = hashTable[hashKey] -> nextHash;
+    }
+    else{
+        Node* node = hashTable[hashKey];
+        Node* next = node -> nextHash;
+
+        while(next){
+            if(next->id == hashKey && CompareChar(next->name, s)){
+                node -> nextHash = next -> nextHash;
+                delNode = next;
+                break;
+            }
+            node = next;
+            next = node -> nextHash;
+        }
+    }
+
+    free(delNode);
+}
+
+int GetArray(){
+
+    int idx = 0;
+    for(int i=0; i<mod; i++){
+        Node *node = hashTable[i];
+
+        while(node != NULL){
+            for(int k=0; node->name[k]; k++){
+                arr[idx][k] = node->name[k];
+            }
+            node = node->nextHash;
+            idx++;
+        }
+    }
+    return idx;
+}
+
+bool CompLarge(char *a, char *b){
+    for(int i=0; a[i] || b[i]; i++){
+        if(a[i] == b[i]) continue;
+        else if(a[i] < b[i]) return true;
+        else return false;
+    }
+}
+
+bool CompSmall(char *a, char *b){
+    for(int i=0; a[i] || b[i]; i++){
+        if(a[i] == b[i]) continue;
+        else if(a[i] > b[i]) return true;
+        else return false;
+
+    }
+}
+
+void swap(char *a, char *b){
+    char tmp[7] = {0, };
+    for(int i=0; a[i]; i++){
+        tmp[i] = a[i];
+        a[i] = 0;
+    }
+
+    for(int i=0; b[i]; i++){
+        a[i] = b[i];
+        b[i] = 0;
+    }
+
+    for(int i=0; tmp[i]; i++)
+        b[i] = tmp[i];
+}
+
+void quickSort(int l, int r){
+
+    if(r <= l) return;
+    int i = l;
+    int j = r+1;
+
+    while(i < j){
+        do{ i++; }while(i <= r && CompLarge(arr[l], arr[i]));
+        do{ j--; }while(j >= l+1 && CompSmall(arr[l], arr[j]));
+        if(i < j) swap(arr[i], arr[j]);
+    }
+
+    swap(arr[l], arr[j]);
+    quickSort(l, j-1);
+    quickSort(j+1, r);
+}
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    cin >> n;
+    while(n--){
+        char name[6], stat[6];
+        cin >> name >> stat;
+
+        int key = MyHash(name);
+
+        if(stat[0] == 'e') {
+            Node* node = new Node(name, key);
+            AddHashTable(node, key);
+        }
+        else DelHashTable(key, name);
+    }
+
+    int len = GetArray();
+
+    quickSort(0, len-1);
+
+    for(int i=0; i<len; i++)
+        cout << arr[i] << "\n";
+}
