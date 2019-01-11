@@ -1,0 +1,44 @@
+// https://blog.naver.com/kimh0429/221439632248
+
+#include <iostream>
+#include <string.h>
+#include <algorithm>
+
+using namespace std;
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    bool flag = false;
+    string dataType = "";
+    string add = "";
+    string name = "";
+
+    char n;
+    while(scanf("%c", &n) != EOF){
+        if(n == ';' || n == ','){
+
+            reverse(add.begin(), add.end());
+            cout << dataType << add << " " << name << ";\n";
+
+            flag = false;
+            if(n == ';') dataType = "";
+            add = "";
+            name = "";
+            continue;
+        }
+
+        if(!flag && n != ' '){
+            dataType += n;
+        }
+        if(flag && n != ' '){
+            if(n == '[') add += ']';
+            else if(n == ']') add += '[';
+            else if(n == '*' || n == '&'){
+                add += n;
+            }
+            else name += n;
+        }
+        else if(!flag && n == ' ') flag = true;
+    }
+}
