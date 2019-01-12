@@ -1,3 +1,5 @@
+// 백준 회사에 있는 사람
+
 #include <iostream>
 #include <algorithm>
 #define mod 100007
