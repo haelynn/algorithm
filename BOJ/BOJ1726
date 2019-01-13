@@ -1,0 +1,86 @@
+// https://blog.naver.com/kimh0429/221441052170
+
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <string.h>
+
+using namespace std;
+
+typedef struct Robot{
+    int y;
+    int x;
+    int dir;
+    int cnt;
+}Robot;
+
+int m, n, ans = 0x7fffffff;
+int startY, startX, startD, endY, endX, endD;
+int arr[101][101], visited[101][101][4];
+int dy[5] = {0, 0, 0, 1, -1};
+int dx[5] = {0, 1, -1, 0, 0};
+
+bool InRange(int y, int x){
+    return y >= 1 && y <= n && x >= 1 && x <= m;
+}
+
+int BFS(){
+
+    queue<Robot> bfs;
+    visited[startY][startX][startD] = 1;
+    bfs.push({startY, startX, startD, 0});
+
+    while(!bfs.empty()){
+        int fy = bfs.front().y;
+        int fx = bfs.front().x;
+        int fd = bfs.front().dir;
+        int fcnt = bfs.front().cnt;
+        bfs.pop();
+
+        if(fy == endY && fx == endX && fd == endD){
+            return fcnt;
+        }
+
+        for(int k=1; k<=3; k++){
+            int ny = fy + dy[fd] * k;
+            int nx = fx + dx[fd] * k;
+
+
+            if(visited[ny][nx][fd] != -1) continue;
+
+            if(InRange(ny, nx) && !arr[ny][nx]){
+                visited[ny][nx][fd] = 1;
+                bfs.push({ny, nx, fd, fcnt+1});
+            }
+            else break;
+        }
+
+        for(int i=1; i<=4; i++){
+            if(fd != i && visited[fy][fx][i] == -1){
+                visited[fy][fx][i] = 1;
+                if((fd == 1 && i == 2) || (fd == 2 && i == 1) || (fd == 3 && i == 4) || (fd == 4 && i == 3)){
+                    bfs.push({fy, fx, i, fcnt+2});
+                }
+                else bfs.push({fy, fx, i, fcnt+1});
+            }
+        }
+    }
+    return -1;
+}
+
+int main() {
+    std::ios::sync_with_stdio(false);
+
+    memset(visited, -1, sizeof(visited));
+
+    cin >> n >> m;
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=m; j++)
+            cin >> arr[i][j];
+    }
+
+    cin >> startY >> startX >> startD;
+    cin >> endY >> endX >> endD;
+
+    cout << BFS() << "\n";
+}
