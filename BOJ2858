@@ -1,0 +1,29 @@
+// https://blog.naver.com/kimh0429/221441182797
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    int r, b;
+    cin >> r >> b;
+
+    for(int i=1; i<=b; i++){
+        if(b % i) continue;
+
+        if((b/i+2) * 2 + i * 2 == r){
+            int l = b/i+2;
+            int w = i + 2;
+
+            if(l != w){
+                l = max(l, w);
+                w = min(l, w);
+            }
+            cout << l << " " << w << "\n";
+            return 0;
+        }
+    }
+}
