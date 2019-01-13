@@ -1,0 +1,24 @@
+#include <iostream>
+#include <string.h>
+
+using namespace std;
+
+char arr[9] = {'C', 'A', 'M', 'B', 'R', 'I', 'D', 'G', 'E'};
+
+int main(){
+    string str;
+    cin >> str;
+
+    for(int i=0; i<str.length(); i++){
+        bool flag = false;
+        for(int j=0; j<9; j++){
+            if(str[i] == arr[j]){
+                flag = true;
+                break;
+            }
+        }
+
+        if(!flag) cout << str[i];
+    }
+    cout << "\n";
+}
