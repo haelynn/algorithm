@@ -1,0 +1,22 @@
+#include <iostream>
+
+using namespace std;
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    int checked[43] = {0, };
+
+    for(int i=0; i<10; i++){
+        int tmp;
+        cin >> tmp;
+
+        checked[tmp%42]++;
+    }
+
+    int cnt = 0;
+    for(int i=0; i<=42; i++){
+        if(checked[i]) cnt++;
+    }
+    cout << cnt << "\n";
+}
