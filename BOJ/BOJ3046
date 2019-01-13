@@ -1,0 +1,10 @@
+#include <iostream>
+
+using namespace std;
+
+int main(){
+    int r, avg;
+    cin >> r >> avg;
+
+    cout << avg * 2 - r << "\n";
+}
