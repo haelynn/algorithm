@@ -1,0 +1,23 @@
+#include <iostream>
+
+using namespace std;
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    int day;
+    cin >> day;
+
+    if(day > 9) day %= 10;
+
+    int cnt = 0;
+    for(int i=0; i<5; i++){
+        int car;
+        cin >> car;
+
+        if(day % 10 == 0 && car == 0) cnt++;
+        else if(day == car) cnt++;
+    }
+
+    cout << cnt << "\n";
+}
