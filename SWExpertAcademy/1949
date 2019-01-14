@@ -1,0 +1,86 @@
+// https://blog.naver.com/kimh0429/221442172080
+
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+int n, k, ans;
+int arr[9][9];
+int visited[9][9];
+int dy[4] = {0, 0, -1, 1};
+int dx[4] = {-1, 1, 0, 0};
+
+bool InRange(int y, int x){
+    return (y >= 0 && y < n && x >= 0 && x < n);
+}
+
+void Solution(int y, int x, int depth, bool flag){
+
+    ans = max(ans, depth);
+
+    for(int i=0; i<4; i++){
+        int ny = y + dy[i];
+        int nx = x + dx[i];
+
+        if(!InRange(ny, nx) || visited[ny][nx]) continue;
+
+        if(arr[ny][nx] < arr[y][x]){
+            visited[ny][nx]++;
+            Solution(ny, nx, depth+1, flag);
+            visited[ny][nx]--;
+        }
+        else if(arr[ny][nx] >= arr[y][x] && !flag){
+            for(int j=1; j<=k; j++){
+                if(arr[ny][nx] - j < arr[y][x]){
+                    visited[ny][nx]++;
+                    arr[ny][nx] -= j;
+
+                    Solution(ny, nx, depth+1, true);
+
+                    arr[ny][nx] += j;
+                    visited[ny][nx]--;
+                }
+            }
+        }
+    }
+}
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    int T;
+    cin >> T;
+
+    for(int t=1; t<=T; t++){
+
+        ans = 0;
+
+        cin >> n >> k;
+
+        int topM = 0;
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                cin >> arr[i][j];
+
+                topM = max(topM, arr[i][j]);
+            }
+        }
+
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(arr[i][j] != topM) continue;
+
+                memset(visited, 0, sizeof(visited));
+                visited[i][j]++;
+                Solution(i, j, 1, false);
+                visited[i][j]--;
+            }
+        }
+
+        // output
+        cout << "#" << t << " " << ans << "\n";
+    }
+}
