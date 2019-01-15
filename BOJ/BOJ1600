@@ -1,0 +1,96 @@
+// https://blog.naver.com/kimh0429/221442795108
+
+#include <iostream>
+#include <stdio.h>
+#include <queue>
+#include <cstring>
+#define INF 0x7fffffff
+
+using namespace std;
+
+int w, h, k, ans = INF;
+int arr[201][201], visited[201][201][31];
+int dy[4] = {0, -1, 0, 1};
+int dx[4] = {-1, 0, 1, 0};
+int hy[8] = {-2, -2, -1, -1, 1, 1, 2, 2};
+int hx[8] = {-1, 1, -2, 2, -2, 2, -1, 1};
+
+typedef struct monkey{
+    int y;
+    int x;
+    int jump;
+}monkey;
+
+bool InRange(int y, int x){
+    return y >= 0 && y < h && x >= 0 && x < w;
+}
+
+void BFS(){
+
+    queue<monkey> bfs;
+    visited[0][0][0] = 0;
+    bfs.push({0, 0, 0});
+
+    while(!bfs.empty()){
+        int fy = bfs.front().y;
+        int fx = bfs.front().x;
+        int fs = bfs.front().jump;
+        bfs.pop();
+
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(ny == h-1 && nx == w-1){
+                ans = visited[fy][fx][fs]+1;
+                cout << ans << "\n";
+                return;
+            }
+
+            if(InRange(ny, nx) && visited[ny][nx][fs] == -1 && !arr[ny][nx]){
+                visited[ny][nx][fs] = visited[fy][fx][fs] + 1;
+                bfs.push({ny, nx, fs});
+            }
+        }
+
+        if(fs >= k) continue;
+        for(int i=0; i<8; i++){
+            int ny = fy + hy[i];
+            int nx = fx + hx[i];
+
+            if(ny == h-1 && nx == w-1){
+                ans = visited[fy][fx][fs]+1;
+                cout << ans << "\n";
+                return;
+            }
+
+            if(InRange(ny, nx) && visited[ny][nx][fs+1] == -1 && !arr[ny][nx]){
+                visited[ny][nx][fs+1] = visited[fy][fx][fs]+1;
+                bfs.push({ny, nx, fs+1});
+            }
+        }
+    }
+
+    cout << -1 << "\n";
+}
+
+int main(){
+
+    scanf("%d", &k);
+    scanf("%d %d", &w, &h);
+
+    for(int i=0; i<h; i++){
+        for(int j=0; j<w; j++){
+            scanf("%d", &arr[i][j]);
+        }
+    }
+
+    if(h == 1 && w == 1){
+        printf("%d\n", 0);
+        return 0;
+    }
+
+    memset(visited, -1, sizeof(visited));
+    BFS();
+
+}
