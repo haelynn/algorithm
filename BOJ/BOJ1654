@@ -1,0 +1,42 @@
+// https://blog.naver.com/kimh0429/221442644534
+
+#include <iostream>
+#include <algorithm>
+#define ll long long
+
+using namespace std;
+
+int main(){
+    std::ios::sync_with_stdio(false);
+
+    ll k, n, maxLen = 0;
+    ll arr[10001];
+
+    cin >> k >> n;
+
+    for(int i=0; i<k; i++){
+        cin >> arr[i];
+        maxLen = max(arr[i], maxLen);
+    }
+
+    ll left = 1, right = maxLen;
+    ll ans = 0;
+
+    while(left <= right){
+
+        ll mid = (left + right) / 2;
+        ll cnt = 0;
+
+        for(int i=0; i<k; i++){
+            cnt += arr[i] / mid;
+        }
+
+        if(cnt >= n) {
+            left = mid + 1;
+            ans = max(mid, ans);
+        }
+        else right = mid - 1;
+    }
+
+    cout << ans << "\n";
+}
