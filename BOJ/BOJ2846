@@ -1,0 +1,33 @@
+#include <iostream>
+
+using namespace std;
+
+int main(){
+
+    int n;
+    scanf("%d", &n);
+
+    int ans = 0;
+
+    int tmp, start, pre;
+    scanf("%d", &tmp);
+    start = tmp;
+    pre = tmp;
+
+    for(int i=1; i<n; i++){
+        scanf("%d", &tmp);
+
+        if(tmp <= pre){
+
+            if(pre - start > ans) ans = pre - start;
+            start = tmp;
+        }
+        pre = tmp;
+    }
+    if(tmp <= pre){
+        if(tmp - start > ans) ans = tmp - start;
+        start = tmp;
+    }
+
+    printf("%d\n", ans);
+}
