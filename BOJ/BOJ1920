@@ -1,0 +1,77 @@
+// https://blog.naver.com/kimh0429/221443766899
+
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+
+int arrN[100001];
+
+void swap(int *a, int *b){
+    int *tmp = a;
+    a = b;
+    b = tmp;
+}
+
+void QuickSort(int l, int r){
+
+    if(l >= r) return;
+
+    int i = l;
+    int j = r+1;
+
+    int p = (l+r)/2;
+    if(arrN[l] > arrN[p] && arrN[l] < arrN[r]) p = l;
+    else if(arrN[r] < arrN[l] && arrN[r] > arrN[p])p = r;
+
+
+    swap(arrN[p], arrN[l]);
+    while(i <= j){
+        do{ i++; }while(i <= r && arrN[l] >= arrN[i]);
+        do{ j--; }while(j >= l+1 && arrN[l] <= arrN[j]);
+        if(i <= j) swap(arrN[i], arrN[j]);
+    }
+
+    swap(arrN[l], arrN[j]);
+    QuickSort(l, j-1);
+    QuickSort(j+1, r);
+}
+
+int binarySearch(int target, int n){
+
+    int l = 0;
+    int r = n-1;
+
+    while(l <= r){
+        int mid = (l + r) / 2;
+
+        if(arrN[mid] >= target){
+            if(arrN[mid] == target) return 1;
+            r = mid - 1;
+        }
+
+
+        else
+            l = mid + 1;
+    }
+
+    return 0;
+}
+
+int main(){
+    int n, m;
+
+    scanf("%d", &n);
+    for(int i=0; i<n; i++)
+        scanf("%d", &arrN[i]);
+
+    QuickSort(0, n-1);
+
+    scanf("%d", &m);
+    for(int i=0; i<m; i++){
+        int tmp;
+        scanf("%d", &tmp);
+
+        printf("%d\n", binarySearch(tmp, n));
+    }
+}
