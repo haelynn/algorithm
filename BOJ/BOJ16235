@@ -1,0 +1,97 @@
+// https://blog.naver.com/kimh0429/221444810292
+
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int n, m, k;
+int arr[11][11], a[11][11];
+vector <int> tree[11][11];
+
+bool InRange(int y, int x){
+    return (y > 0 && y <= n && x > 0 && x <= n);
+}
+
+int main(){
+
+    scanf("%d %d %d", &n, &m, &k);
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++){
+            scanf("%d", &a[i][j]);
+            arr[i][j] = 5;
+        }
+    }
+
+
+    for(int i=0; i<m; i++){
+        int x, y, z;
+        scanf("%d %d %d", &x, &y, &z);
+
+        tree[x][y].push_back(z);
+    }
+
+    while(k--){
+
+        // 봄 여름
+
+        for(int i=1; i<=n; i++){
+            for(int j=1; j<=n; j++){
+
+                sort(tree[i][j].begin(), tree[i][j].end());
+
+                int summer = 0;
+                for(int l=0; l<tree[i][j].size(); l++){
+                    if(tree[i][j][l] <= arr[i][j]){
+                        arr[i][j] -= tree[i][j][l];
+                        tree[i][j][l]++;
+                    }
+                    else{
+                        summer += tree[i][j][l]/2;
+                        tree[i][j].erase(tree[i][j].begin()+l);
+                        l--;
+                    }
+                }
+                arr[i][j] += summer;
+            }
+        }
+
+        // 가을
+        for(int i=1; i<=n; i++){
+            for(int j=1; j<=n; j++){
+
+                for(int l=0; l<tree[i][j].size(); l++){
+                    if(tree[i][j][l] % 5 == 0){
+
+                        for(int w=-1; w<=1; w++){
+                            for(int q=-1; q<=1; q++){
+                                if(!w && !q) continue;
+
+                                if(InRange(i+w, j+q))
+                                    tree[i+w][j+q].insert(tree[i+w][j+q].begin(), 1);
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        // 겨울
+        for(int i=1; i<=n; i++){
+            for(int j=1; j<=n; j++)
+                arr[i][j] += a[i][j];
+        }
+    }
+
+    int ans = 0;
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++)
+            ans += tree[i][j].size();
+    }
+
+    printf("%d\n", ans);
+
+}
