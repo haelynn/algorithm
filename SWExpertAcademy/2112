@@ -1,0 +1,91 @@
+#include <iostream>
+#include <stdio.h>
+#include <cstring>
+#define INF (0x7fffffff)
+
+using namespace std;
+
+int d, w, k, ans;
+int arr[14][21], tmp[14][21];
+int chemical[14] = {0, };
+
+bool Verif(){
+
+    for(int i=0; i<w; i++){
+        bool flag = false;
+
+        for(int j=0; j<=d-k; j++){
+            
+            bool flag2 = false;
+            for(int a=j+1; a < j+k; a++){
+                if(tmp[j][i] != tmp[a][i]){
+                    flag2 = true;
+                    break;
+                }
+            }
+            if(!flag2){
+                flag = true;
+                break;
+            }
+        }
+        
+        if(!flag) return false;
+    }
+
+    return true;
+}
+
+void Solution(int y, int cnt){
+
+    if(cnt >= ans) return;
+    if(y == d){
+        for(int i=0; i<d; i++){
+            for(int j=0; j<w; j++){
+                tmp[i][j] = arr[i][j];
+            }
+        }
+
+        for(int i=0; i<d; i++){
+            for(int j=0; j<w; j++){
+                if(chemical[i] != -1){
+                    tmp[i][j] = chemical[i];
+                }
+            }
+        }
+
+        if(Verif()) ans = min(ans, cnt);
+        return;
+    }
+    if(y >= d) return;
+
+    chemical[y] = -1;
+    Solution(y+1, cnt);
+
+    chemical[y] = 0;
+    Solution(y+1, cnt+1);
+
+    chemical[y] = 1;
+    Solution(y+1, cnt+1);
+}
+
+
+int main(){
+
+    int T;
+    scanf("%d", &T);
+
+    for(int t=1; t<=T; t++){
+        scanf("%d %d %d", &d, &w, &k);
+
+        ans = d;
+        for(int i=0; i<d; i++){
+            for(int j=0; j<w; j++)
+                scanf("%d", &arr[i][j]);
+        }
+
+        Solution(0, 0);
+
+        //
+        printf("#%d %d\n", t, ans);
+    }
+}
