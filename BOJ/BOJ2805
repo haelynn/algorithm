@@ -1,0 +1,49 @@
+// https://blog.naver.com/kimh0429/221447839328
+
+#define ll long long
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main(){
+
+    ll n, m;
+    scanf("%lld %lld", &n, &m);
+
+    vector<ll> tree;
+    tree.resize(n);
+
+    ll maxNum = 0;
+
+    for(int i=0; i<n; i++){
+        scanf("%lld", &tree[i]);
+
+        maxNum = max(maxNum, tree[i]);
+    }
+
+    ll ans = 0;
+    ll l = 0, r = maxNum;
+
+    while(l <= r){
+        ll mid = (l + r) / 2;
+        ll sum = 0;
+
+        for(int i=0; i<n; i++){
+            if(mid < tree[i])
+                sum += tree[i] - mid;
+        }
+
+
+        if(sum >= m){
+            if(ans < mid)
+                ans = mid;
+
+            l = mid + 1;
+        }
+        else r = mid - 1;
+    }
+
+    printf("%lld\n", ans);
+}
