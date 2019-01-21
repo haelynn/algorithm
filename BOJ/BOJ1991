@@ -1,0 +1,80 @@
+// https://blog.naver.com/kimh0429/221447842772
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+typedef struct Tree{
+    int left;
+    int right;
+};
+
+Tree tree[26];
+
+void preOrder(int node){
+
+    printf("%c", node + 'A');
+    if(tree[node].left != -1)
+        preOrder(tree[node].left);
+
+    if(tree[node].right != -1)
+        preOrder(tree[node].right);
+}
+
+void inOrder(int node){
+
+    if(tree[node].left != -1)
+        inOrder(tree[node].left);
+
+    printf("%c", node + 'A');
+
+    if(tree[node].right != -1)
+        inOrder(tree[node].right);
+}
+
+void postOrder(int node){
+
+    if(tree[node].left != -1)
+        postOrder(tree[node].left);
+
+    if(tree[node].right != -1)
+        postOrder(tree[node].right);
+
+    printf("%c", node + 'A');
+}
+
+int main(){
+
+    int n;
+    scanf("%d", &n);
+
+    for(int i=0; i<n; i++){
+
+        char str[3];
+        for(int j=0; j<3; j++){
+            scanf(" %c", &str[j]);
+        }
+
+        int parent = str[0] - 'A';
+        int child1 = str[1] - 'A';
+        int child2 = str[2] - 'A';
+
+        tree[parent].left = -1;
+        tree[parent].right = -1;
+
+        if(str[1] != '.')
+            tree[parent].left = child1;
+
+        if(str[2] != '.')
+            tree[parent].right = child2;
+    }
+
+    preOrder(0);
+    printf("\n");
+    inOrder(0);
+    printf("\n");
+    postOrder(0);
+    printf("\n");
+
+}
