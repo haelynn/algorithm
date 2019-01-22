@@ -1,0 +1,44 @@
+// https://blog.naver.com/kimh0429/221448615564
+
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> root;
+
+int Find(int a) {
+	if (root[a] == a) return a;
+	else return root[a] = Find(root[a]);
+}
+
+int main() {
+
+	int n, m;
+	scanf("%d %d\n", &n, &m);
+
+	root.resize(n + 1);
+
+	for (int i = 1; i <= n; i++)
+		root[i] = i;
+
+	for (int j = 0; j < m; j++) {
+		int a, b, c;
+		scanf("%d %d %d", &a, &b, &c);
+
+		if (!a) { // union
+			int aRoot = Find(b);
+			int bRoot = Find(c);
+			root[aRoot] = bRoot;
+		}
+		else { // find
+			int aRoot = Find(b);
+			int bRoot = Find(c);
+
+			if (aRoot == bRoot) printf("YES\n");
+			else printf("NO\n");
+		}
+	}
+}
