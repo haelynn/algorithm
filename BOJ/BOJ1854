@@ -1,0 +1,69 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define INF (0x7fffffff)
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+typedef struct Node {
+	int to;
+	int weight;
+
+	bool operator < (const Node a)const {
+		return weight > a.weight;
+	}
+}Node;
+int n, m, k;
+vector<Node> edge[2000001];
+int dist[1001];
+
+int main() {
+	
+	scanf("%d %d %d", &n, &m, &k);
+	for (int i = 0; i < m; i++) {
+		int a, b, c;
+
+		scanf("%d %d %d", &a, &b, &c);
+		edge[a].push_back({ b, c });
+	}
+
+	for (int i = 1; i <= n; i++) dist[i] = INF;
+	
+	dist[1] = 0;
+	priority_queue<Node> pq;
+	priority_queue<int, vector<int> > distHis[1001];
+	distHis[1].push(0);
+	pq.push({ 1, 0 });
+
+	while (!pq.empty()) {
+		int node = pq.top().to;
+		int weight = pq.top().weight;
+		pq.pop();
+
+		if (dist[node] > weight) 
+			dist[node] = weight;
+       
+		for (int i = 0; i < edge[node].size(); i++) {
+			int nnode = edge[node][i].to;
+			int ndist = edge[node][i].weight + weight;
+
+			if (distHis[nnode].size() < k) {
+				distHis[nnode].push(ndist);
+				pq.push({ nnode, ndist });
+			}
+			else if (distHis[nnode].top() > ndist) {
+				distHis[nnode].pop();
+				distHis[nnode].push(ndist);
+				pq.push({ nnode, ndist });
+			}
+				
+		}
+	}
+
+	for (int i = 1; i <= n; i++) {
+		if (distHis[i].size() < k) printf("-1\n");
+		else printf("%d\n", distHis[i].top());
+	}
+}
