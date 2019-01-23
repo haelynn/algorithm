@@ -1,0 +1,72 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define INF (0x7fffffff)
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> cv;
+vector<int> edge[20000];
+int visited[20000] = { 0, };
+int v, e;
+int depth;
+
+int DFS(int node, int preNode) {
+
+	visited[node] = depth++;
+
+	int ret = visited[node];
+	int child = 0;
+	int comp = visited[node];
+	for (int i = 0; i < edge[node].size(); i++) {
+		int nnode = edge[node][i];
+
+		if (visited[nnode] && nnode != preNode) ret = min(ret, visited[nnode]);
+		else if (!visited[nnode]) {
+
+			// child수를 검색하여 root node의 단절점 상태 확인
+			child++;
+			comp = DFS(nnode, node);
+
+			if (comp >= visited[node] && child > 0 && visited[node] != 1) {
+				cv.push_back(node);
+			}
+			ret = min(ret, comp);
+		}
+	}
+
+	if (visited[node] == 1 && child > 1)
+		cv.push_back(node);
+
+	return ret;
+}
+
+int main() {
+
+	scanf("%d %d", &v, &e);
+	for (int i = 0; i < e; i++) {
+		int from, to;
+		scanf("%d %d", &from, &to);
+
+		edge[from].push_back(to);
+		edge[to].push_back(from);
+	}
+
+
+	for (int i = 1; i <= v; i++) {
+		if (!visited[i]) {
+			depth = 1;
+			DFS(i, i);
+		}
+	}
+
+	sort(cv.begin(), cv.end());
+	cv.erase(unique(cv.begin(), cv.end()), cv.end());
+	printf("%d\n", cv.size());
+	for (int i = 0; i < cv.size(); i++)
+		printf("%d ", cv[i]);
+
+	printf("\n");
+
+}
