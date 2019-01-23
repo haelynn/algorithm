@@ -1,0 +1,50 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define INF (0x7fffffff)
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+int main() {
+
+	int n, m;
+	int indegree[32001];
+	vector<vector<int> > v;
+	queue<int> q;
+
+	scanf("%d %d", &n, &m);
+	v.resize(n + 1);
+	memset(indegree, 0, sizeof(indegree));
+
+	for (int i = 0; i < m; i++) {
+		int a, b;
+		scanf("%d %d", &a, &b);
+
+		v[a].push_back(b);
+		indegree[b]++;
+	}
+
+	for (int i = 1; i <= n; i++) {
+		if (!indegree[i]) {
+			q.push(i);
+			indegree[i] = INF;
+		}
+	}
+
+	while (!q.empty()) {
+		int front = q.front();
+		q.pop();
+
+		printf("%d ", front);
+		for (int i = 0; i < v[front].size(); i++) {
+			indegree[v[front][i]]--;
+
+			if (!indegree[v[front][i]]) {
+				q.push(v[front][i]);
+				indegree[v[front][i]] = INF;
+			}
+		}	
+	}
+}
