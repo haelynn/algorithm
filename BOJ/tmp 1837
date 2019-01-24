@@ -1,0 +1,78 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+bool primeNum[1000001] = { 0, };
+vector<int> prime;
+char p[101];
+int k;
+
+void MakePrime() {
+
+	for (int i = 2; i <= sqrt(k); i++) {
+
+		if (primeNum[i]) continue;
+
+		for (int j = i*i; j <= k; j+=i) {
+			if (primeNum[j]) continue;
+
+			primeNum[j] = true;
+		}
+	}
+
+	for (int i = 2; i < k; i++) {
+		if (!primeNum[i]) prime.push_back(i);
+	}
+}
+
+bool CheckPass(int n, int nIdx) {
+
+	int idx = 0;
+	vector<int> str;
+
+	while (p[idx]) {
+
+		for (int i = 0; i < nIdx - str.size() && p[idx]; i++)
+			str.push_back(p[idx++] - '0');
+
+		int pNum = 0;
+		for (int i = 0; i < str.size(); i++) {
+			pNum *= 10;
+			pNum += str[i];
+		}
+
+		pNum %= n;
+		
+	}
+
+	return true;
+}
+
+int main() {
+
+	scanf("%s", &p);
+	scanf("%d", &k);
+
+	MakePrime();
+
+	for (int i = 0; i < prime.size(); i++) {
+
+		int nIdx = 0;
+		int tmp = prime[i];
+		while (tmp) {
+			nIdx++;
+			tmp /= 10;
+		}
+
+		if (!CheckPass(prime[i], nIdx)) {
+			printf("BAD\n");
+			return 0;
+		}
+	}
+
+	printf("GOOD\n");
+}
