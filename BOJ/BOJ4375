@@ -1,0 +1,38 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+int main() {
+
+
+	int n;
+	while (scanf("%d", &n) != EOF) {
+
+		int cnt = 1;
+		int ans = 1;
+		while (ans < n) {
+			ans *= 10;
+			ans++;
+			cnt++;
+		}
+
+		int tmp = ans % n;
+		while (tmp) {
+			tmp %= n;
+
+			if (tmp) {
+				tmp *= 10;
+				tmp++;
+				tmp %= n;
+				cnt++;
+			}
+		}
+		printf("%d\n", cnt);
+	}
+
+
+}
