@@ -1,0 +1,47 @@
+// https://blog.naver.com/kimh0429/221451625665
+
+#include <iostream>
+
+using namespace std;
+
+int n, n1, n2;
+
+int main(){
+
+    scanf("%d %d %d", &n, &n1, &n2);
+
+    int game = 1;
+    int flag = 0;
+    if(n % 2) flag = n;
+    do{
+
+        if(n1 % 2 == 0 && n1-1 == n2) break;
+        else if(n1 % 2 != 0 && n1+1 == n2) break;
+
+        if(n1 % 2 == 0) n1 /= 2;
+        else if(flag == n1) {
+            n1 = n / 2 + 1;
+            flag = n1;
+        }
+        else n1 = (n1 + 1) / 2;
+
+        if(n2 % 2 == 0) n2 /= 2;
+        else if(flag == n2){
+            n2 = n / 2 + 1;
+            flag = n2;
+        }
+        else n2 = (n2 + 1) / 2;
+
+        game++;
+        n /= 2;
+
+        if(flag % 2 == 0){
+            n++;
+            flag = 0;
+        }
+        else if(flag) flag = n + 1;
+
+    }while(n > 1);
+
+    printf("%d\n", game);
+}
