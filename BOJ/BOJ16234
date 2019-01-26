@@ -1,0 +1,145 @@
+
+// https://blog.naver.com/kimh0429/221451678765
+
+// 16:48 ~ 17:39
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <math.h>
+#include <queue>
+
+using namespace std;
+
+typedef struct Node{
+    int num;
+    bool dir[4];
+}Node;
+
+int n, l, r;
+Node arr[51][51];
+vector<pair<int, int> > unit;
+vector<int> newPop;
+int dy[4] = {-1, 0, 1, 0};
+int dx[4] = {0, 1, 0, -1};
+int visited[51][51];
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+void Init(){
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+
+            visited[i][j] = 0;
+
+            for(int k=0; k<4; k++)
+                arr[i][j].dir[k] = false;
+        }
+    }
+
+    unit.clear();
+    newPop.clear();
+}
+
+bool OpenGate(){
+
+
+    bool flag = false;
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+
+            for(int d=0; d<4; d++){
+                int ny = i + dy[d];
+                int nx = j + dx[d];
+                int comp = abs(arr[ny][nx].num - arr[i][j].num);
+
+                if(InRange(ny, nx) && comp >= l && comp <= r){
+                    unit.push_back({i, j});
+                    arr[i][j].dir[d] = true;
+                    flag = true;
+                }
+            }
+        }
+    }
+
+    return flag;
+}
+
+void BFS(int y, int x, int u){
+
+    queue<pair<int, int> > q;
+    visited[y][x] = u;
+    q.push({y, x});
+    int sum = 0;
+    int cnt = 0;
+
+    while(!q.empty()){
+        int fy = q.front().first;
+        int fx = q.front().second;
+        q.pop();
+        sum += arr[fy][fx].num;
+        cnt++;
+
+        for(int i=0; i<4; i++){
+            if(!arr[fy][fx].dir[i]) continue;
+
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(InRange(ny, nx) && !visited[ny][nx]){
+                q.push({ny, nx});
+                visited[ny][nx] = u;
+            }
+        }
+    }
+
+    newPop.push_back(sum/cnt);
+}
+
+int main(){
+
+    scanf("%d %d %d", &n, &l, &r);
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++)
+            scanf("%d", &arr[i][j].num);
+    }
+
+    int idx = 0;
+    while(idx <= 2000){
+
+        // init
+        bool flag = false;
+        Init();
+
+        // open gate
+        if(!OpenGate()) break;
+
+        int cnt = 1;
+        for(int i=0; i<unit.size(); i++){
+            int y = unit[i].first;
+            int x = unit[i].second;
+
+            if(!visited[y][x]){
+                BFS(y, x, cnt);
+                cnt++;
+            }
+        }
+
+
+        for(int i=0; i<50; i++){
+            for(int j=0; j<50; j++){
+                if(visited[i][j]){
+                    arr[i][j].num = newPop[visited[i][j]-1];
+                }
+            }
+        }
+
+        idx++;
+    }
+
+    printf("%d\n", idx);
+}
