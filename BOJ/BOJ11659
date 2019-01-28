@@ -1,0 +1,31 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int arr[100001];
+
+int main() {
+
+	int n, m;
+	scanf("%d %d", &n, &m);
+
+	for (int i = 1; i <= n; i++) {
+		int in;
+		scanf("%d", &in);
+
+		if (i == 1) arr[i] = in;
+		else arr[i] = arr[i - 1] + in;
+	}
+
+	for (int i = 0; i < m; i++) {
+		int from, to;
+		scanf("%d %d", &from, &to);
+
+		long long ans = arr[to] - arr[from];
+		if (from) ans += arr[from] - arr[from - 1];
+		
+		printf("%lld\n", ans);
+	}
+}
