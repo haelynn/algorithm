@@ -1,0 +1,38 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define ll long long
+#include <iostream>
+
+
+using namespace std;
+
+ll dp[101][21] = { 0, };
+
+int main() {
+	
+	int n;
+	scanf("%d", &n);
+
+	for (int i = 0; i < n-1; i++) {
+		int in;
+		scanf("%d", &in);
+
+		if (!i) dp[0][in] = 1;
+		else {
+			for (int j = 0; j <= 20; j++) {
+				int num = dp[i - 1][j];
+				if (num) {
+					if(j+in <= 20)
+						dp[i][j + in]+= dp[i-1][j];
+					if (j - in > -1)
+						dp[i][j - in]+= dp[i-1][j];
+				}
+			}
+		}
+
+	}
+
+	int target;
+	scanf("%d", &target);
+
+	printf("%lld\n", dp[n - 2][target]);
+}
