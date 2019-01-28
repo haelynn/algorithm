@@ -1,0 +1,56 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <math.h>
+#include <cstring>
+#include <vector>
+#define MAX (1000001)
+
+using namespace std;
+
+
+int main() {
+
+	bool arr[1000001] = { 0, };
+	arr[0] = true, arr[1] = true;
+	vector<int> primeNum;
+	for (int i = 2; i < sqrt(MAX); i++) {
+		if (arr[i]) continue;
+
+		for (int j = i*i; j < MAX; j += i) {
+			if (arr[j]) continue;
+			arr[j] = true;
+		}
+	}
+
+	for (int i = 3; i < MAX; i++) {
+		if (!arr[i]) primeNum.push_back(i);
+	}
+
+	int n;
+	int pSize = primeNum.size();
+	int n1, n2, sub;
+	
+	while (true) {
+		scanf("%d", &n);
+		if (!n) break;
+		
+		n1 = n2 = sub = 0;
+		for (int i = 0; i < pSize; i++) {
+			if (primeNum[i] >= n) break;
+			int tmp = n - primeNum[i];
+			if (!arr[tmp]) {
+				if (tmp - primeNum[i] >= sub) {
+					n1 = primeNum[i];
+					n2 = tmp;
+					sub = n2 - n1;
+				}
+			}
+		}
+
+	if (!n1 && !n2) printf("Goldbach's conjecture is wrong.");
+	else printf("%d = %d + %d\n", n, n1, n2);
+
+	}
+
+	
+}
