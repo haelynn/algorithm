@@ -1,0 +1,54 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#define mod (1000000001)
+
+using namespace std;
+int n, m, k;
+int dp[201][201] = { 0, };
+
+int main() {
+
+	for (int i = 1; i <= 200; i++) {
+		dp[i][1] = i;
+
+		for (int j = 2; j <= i; j++)
+			dp[i][j] = min(dp[i-1][j] + dp[i - 1][j - 1], mod);
+		
+		dp[i][i] = dp[i][0] = 1;
+	}
+
+	
+
+	scanf("%d %d %d", &n, &m, &k);
+
+	if (dp[n + m][n] < k) {
+		printf("-1\n");
+		return 0;
+	}
+
+
+	string ans = "";
+	
+	int total = n + m;
+	for (int i = 0; i < total; i++) {
+		if (m && k > dp[n + m - 1][m]) {
+			ans += 'z';
+			k -= dp[n + m - 1][m];
+			m--;
+		}
+		else {
+			if (n) {
+				ans += 'a';
+				n--;
+			}
+		}
+	}
+
+	while (n--) ans += 'a';
+	while (m--)ans += 'z';
+
+	printf("%s\n", ans.c_str());
+}
