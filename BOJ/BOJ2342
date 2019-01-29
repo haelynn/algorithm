@@ -1,0 +1,73 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define ll long long
+#define INF (0x7fffffff)
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int dp[2][5][5];
+
+int retCost(int start, int num) {
+	if (start == 0) return 2;
+
+	num = abs(num - start);
+	if (num == 1 || num == 3) return 3;
+	else if (num == 2) return 4;
+	else if (!num) return 1;
+}
+
+void initDP(int idx) {
+	for (int j = 0; j < 5; j++) {
+		for (int k = 0; k < 5; k++) {
+			dp[idx & 1][j][k] = INF;
+		}
+	}
+}
+
+int main() {
+	
+	int step, idx = 1;
+	int power = 0;
+
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 5; j++) {
+			for (int k = 0; k < 5; k++)
+				dp[i][j][k] = INF;
+		}
+	}
+	dp[0][0][0] = 0;
+
+	while (true) {
+		scanf("%d", &step);
+		if (!step) break;
+		
+		initDP(idx);
+
+		for (int left = 0; left < 5; left++) {
+			for (int right = 0; right < 5; right++) {
+				if (dp[(idx - 1) & 1][left][right] != INF) {
+					if (step != right)
+						dp[idx & 1][step][right] = min(dp[(idx - 1) & 1][left][right] + retCost(left, step), dp[idx & 1][step][right]);
+
+					if (step != left)
+						dp[idx & 1][left][step] = min(dp[(idx - 1) & 1][left][right] + retCost(right, step), dp[idx & 1][left][step]);
+				}
+			}
+		}
+
+		idx++;
+	}
+
+	int ans = INF;
+	for (int j = 0; j < 5; j++) {
+		for (int k = 0; k < 5; k++) {
+			ans = min(ans, dp[(idx+1) & 1][j][k]);
+		}
+	}
+
+	printf("%d\n", ans);
+
+}
