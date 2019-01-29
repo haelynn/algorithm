@@ -1,0 +1,40 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define mod (1000000007)
+#define ll long long
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std; 
+
+int n, m;
+int b[101], c[101];
+int dp[101][10101];
+
+int main() {
+
+	scanf("%d %d", &n, &m);
+	int costSum = 0;
+	for (int i = 1; i <= n; i++) scanf("%d", &b[i]);
+	for (int i = 1; i <= n; i++) {
+		scanf("%d", &c[i]);
+		costSum += c[i];
+	} 
+
+	int byte = 0;
+	for (int i = 1; i <= n; i++) {
+		for (int j = 0; j < c[i]; j++)
+			dp[i][j] = dp[i - 1][j];
+
+		for (int j = c[i]; j <= costSum; j++)
+			dp[i][j] = max(dp[i][j - 1], max(dp[i - 1][j], dp[i - 1][j - c[i]] + b[i]));
+	}
+
+	int ans = 0;
+	for (; ans <= costSum; ans++) {
+		if (dp[n][ans] >= m) break;
+	}
+
+	printf("%d\n", ans);
+
+}
