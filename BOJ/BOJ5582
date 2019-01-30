@@ -1,0 +1,38 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define mod (1000000007)
+#define ll long long
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+using namespace std; 
+
+int dp[4001][4001];
+char a[4001], b[4001];
+
+int main() {
+
+	scanf("%s %s", a + 1, b + 1);
+
+	int aLen = 0, bLen = 0;
+
+	int ans = 0;
+	for (int i = 1; b[i]; i++) {
+		for (int j = 1; a[j]; j++) {
+			if (a[j] == b[i]) dp[i][j] = 1;
+		}
+	}
+
+	for (int i = 1; b[i]; i++) {
+		for (int j = 1; a[j]; j++) {
+			if(dp[i-1][j-1] && dp[i][j])
+				dp[i][j] += dp[i - 1][j - 1];
+			ans = max(ans, dp[i][j]);
+		}
+	}
+
+
+
+	printf("%d\n", ans);
+}
