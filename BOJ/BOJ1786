@@ -1,0 +1,43 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+char t[1000001], p[1000001];
+int f[1000001] = { 0, };
+vector<int> ans;
+
+int main() {
+
+	scanf("%[^\n]", t + 1);
+	getchar();
+	scanf("%[^\n]", p + 1);
+
+	int n = 1;
+	int m = 1;
+	for (; t[n]; n++);
+	for (; p[m]; m++);
+
+	for (int i = 1, j = 0; i < m; i++) {
+		while (j && p[i + 1] != p[j + 1]) j = f[j];
+		if (p[i + 1] == p[j + 1]) j++;
+		f[i + 1] = j;
+	}
+
+	/*for (int i = 1; i < m; i++) printf("%d ", f[i]);
+	printf("\n");*/
+
+	for (int i = 0, j = 0; i < n; i++) {
+		while (j && t[i + 1] != p[j + 1]) j = f[j];
+		if (t[i + 1] == p[j + 1]) j++;
+		if (j == m-1) {
+			ans.push_back(i+1-m+2);
+		}
+	}
+
+	printf("%d\n", ans.size());
+	for (int i = 0; i < ans.size(); i++)
+		printf("%d ", ans[i]);
+
+}
