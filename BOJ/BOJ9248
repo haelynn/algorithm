@@ -1,0 +1,74 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+struct SA {
+	int fr, sr;
+	int idx;
+	bool operator <(const SA &a)const {
+		return fr == a.fr ? sr < a.sr : fr < a.fr;
+	}
+}sa[500001];
+int r[500001]; // r[sa[i].idx] = idx의 first rank
+int lcp[500001];
+char s[500001];
+
+int main() {
+
+	scanf("%s", s + 1);
+
+	int n = 1;
+	for (; s[n]; n++);
+	n--;
+
+	//1. 첫 글자를 기준으로 정렬
+	int i, len, j;
+	for (i = 1; i <= n; i++)
+		sa[i] = { s[i] - 'a', 0, i };
+
+	sort(sa + 1, sa + n + 1);
+
+	//2. 두 글자~n글자까지 정렬
+	for (len = 1; len < n; len <<= 1) {
+
+		//2-1.rank 계산
+		r[sa[1].idx] = 1;
+		for (i = 2; i <= n; i++) {
+			if (sa[i - 1].fr == sa[i].fr && sa[i - 1].sr == sa[i].sr) r[sa[i].idx] = r[sa[i - 1].idx];
+			else r[sa[i].idx] = r[sa[i - 1].idx] + 1;
+		}
+
+		//2-2 second rank 계산
+		for (i = 1; i <= n; i++) {
+			if (sa[i].idx + len <= n) sa[i] = { r[sa[i].idx], r[sa[i].idx + len], sa[i].idx };
+			else sa[i] = { r[sa[i].idx], 0, sa[i].idx };
+		}
+
+		//2-3 SORT	
+		sort(sa + 1, sa + n + 1);
+
+	}
+
+	for (i = 1; i <= n; i++)
+		printf("%d ", sa[i].idx);
+
+	//3 LCP
+	for (int i = 1; i <= n; i++)
+		r[sa[i].idx] = i;
+
+	int x = 0;
+	for (i = 1; i <= n; i++) {
+		j = sa[r[i] - 1].idx;
+		while (s[i + x] == s[j + x])x++; // ana와 anana와 비교 lcp [i] 값 도출
+		lcp[r[i]] = x;
+
+		if (x != 0)
+			x--;
+	}
+
+	printf("\nx");
+	for (int i = 2; i <= n; i++)printf(" %d", lcp[i]);
+	printf("\n");
+}
