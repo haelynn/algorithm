@@ -1,0 +1,34 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+#define ll long long
+
+struct Point {
+	ll x;
+	ll y;
+}p[10001];
+
+using namespace std;
+int main() {
+
+	int n;
+	scanf("%d", &n);
+
+	for (int i = 0; i < n; i++) scanf("%lld %lld", &p[i].x, &p[i].y);
+
+	ll ans = 0;
+	for (int i = 0; i < n - 1; i++) ans += p[i].x * p[i + 1].y;
+	ans += p[n - 1].x * p[0].y;
+
+	for (int i = 0; i < n - 1; i++) ans -= p[i].y * p[i + 1].x;
+	ans -= p[n - 1].y * p[0].x;
+
+	if (ans < 0) ans *= -1;
+	bool flag = false;
+	if (ans % 2) flag = true; // 홀수
+
+	printf("%lld", ans / 2);
+	if (flag) printf(".5\n");
+	else printf(".0\n");
+}
