@@ -25,21 +25,15 @@ void Merge(int l, int mid, int r) {
 	int k = l;
 
 	while (i <= mid && j <= r) {
-		if (arr[i].num > arr[j].num) {
-			tmp[k++] = arr[i++];
-		}
+		if (arr[i].num > arr[j].num) tmp[k++] = arr[i++];
 		else {
 			tmp[k] = arr[j++];
 			tmp[k++].sum += mid - i + 1;
 		}
 	}
 
-	while (i <= mid) {
-		tmp[k++] = arr[i++];
-	}
-	while (j <= r) {
-		tmp[k++] = arr[j++];
-	}
+	while (i <= mid) tmp[k++] = arr[i++];
+	while (j <= r) tmp[k++] = arr[j++];
 	for (int i = l; i <= r; i++) arr[i] = tmp[i];
 }
 
@@ -69,8 +63,6 @@ int main() {
 	MergeSort(1, n);
 	sort(arr + 1, arr + n + 1);
 
-	for (int i = 1; i <= n; i++) {
-		printf("%d\n", arr[i].idx - arr[i].sum);
-	}
-
+	for (int i = 1; i <= n; i++) printf("%d\n", arr[i].idx - arr[i].sum);
+	
 }
