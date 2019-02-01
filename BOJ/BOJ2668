@@ -1,0 +1,52 @@
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int arr[101], visited[101];
+int n;
+vector<int> res;
+
+void DFS(int start, int num){
+
+    if(visited[num] && num == start){
+        for(int i=1; i<=n; i++){
+            if(visited[i]){
+                res.push_back(i);
+                arr[i] = -1;
+            }
+        }
+
+        return;
+    }
+
+    if(arr[num] == -1 || visited[num]) return;
+
+    visited[num]++;
+    DFS(start, arr[num]);
+}
+
+int main(){
+
+    scanf("%d", &n);
+    for(int i=1; i<=n; i++) scanf("%d", &arr[i]);
+
+    for(int i=1; i<=n; i++){
+        if(arr[i] == -1) continue;
+
+        if(arr[i] == i) res.push_back(i);
+        else{
+            memset(visited, 0, sizeof(visited));
+            visited[i] = true;
+            DFS(i, arr[i]);
+        }
+    }
+
+    sort(res.begin(), res.end());
+
+    printf("%d\n", res.size());
+    for(int i=0; i<res.size(); i++)
+        printf("%d\n", res[i]);
+}
