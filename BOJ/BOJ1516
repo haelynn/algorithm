@@ -1,0 +1,61 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+#define INF (0x7fffffff)
+
+using namespace std;
+
+int main() {
+	int n;
+	scanf("%d", &n);
+
+	int indegree[501];
+	int time[501];
+	int ans[501];
+	vector<vector<int> > v;
+	queue<int> q;
+	v.resize(n + 1);
+	memset(indegree, 0, sizeof(indegree));
+	memset(ans, 0, sizeof(ans));
+
+
+	for (int i = 1; i <= n; i++) {
+		scanf("%d", &time[i]);
+
+		int tmp;
+		scanf("%d", &tmp);
+		while (tmp != -1) {
+			v[tmp].push_back(i);
+			indegree[i]++;
+			scanf("%d", &tmp);
+		}
+	}
+
+	for (int i = 1; i <= n; i++) {
+		
+		if (!indegree[i]) {
+			ans[i] = time[i];
+			q.push(i);
+			indegree[i] = INF;
+		}
+	}
+
+	while(!q.empty()) {
+		int fId = q.front();
+		q.pop();
+
+		for (int i = 0; i < v[fId].size(); i++) {
+			indegree[v[fId][i]]--;
+			ans[v[fId][i]] = max(ans[v[fId][i]], ans[fId] + time[v[fId][i]]);
+
+			if (!indegree[v[fId][i]]) q.push(v[fId][i]);
+		}
+	}
+
+	for (int i = 1; i <= n; i++)
+		printf("%d\n", ans[i]);
+}
