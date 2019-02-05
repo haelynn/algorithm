@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int n, h=1;
+vector<int> seg;
+
+void Update(int idx, int diff){
+    while(idx > 0){
+        seg[idx] += diff;
+        idx /= 2;
+    }
+}
+
+int IndexTree(int target, int h){
+
+    int cur = 1;
+    while(cur <= h){
+        if(seg[cur * 2] < target){
+                target -= seg[cur * 2];
+                cur = cur * 2 + 1;
+        }
+        else cur = cur * 2;
+    }
+    Update(cur, -1);
+    return cur-h;
+}
+
+int main(){
+
+    seg.resize(4000001);
+    while(h < 1000000) h <<= 1;
+    for(int i=0; i<4000001; i++) seg[i] = 0;
+
+    scanf("%d", &n);
+    while(n--){
+        int s;
+        scanf("%d", &s);
+
+        if(s == 1){ // 사탕 꺼냄
+            int out;
+            scanf("%d", &out);
+            printf("%d\n", IndexTree(out, h-1));
+        }
+        else{ // 사탕 넣거나 빼기
+            int grade, cnt;
+            scanf("%d %d", &grade, &cnt);
+
+            Update(h+grade-1, cnt);
+        }
+    }
+
+}
