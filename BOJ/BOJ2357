@@ -1,0 +1,60 @@
+// https://blog.naver.com/kimh0429/221458820490
+
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+pair<int, int> arr[400001]; // first min, second max
+
+pair<int, int> IndexTree(int a, int b){
+
+    pair<int, int> ret = {0x7fffffff, 0};
+    while(a<=b){
+        if(a % 2 == 1)
+            ret = {min(ret.first, arr[a].first), max(ret.second, arr[a].second)};
+
+        a = (a + 1) / 2;
+
+        if(b % 2 == 0)
+            ret = {min(ret.first, arr[b].first), max(ret.second, arr[b].second)};
+
+        b = (b - 1) / 2;
+    }
+
+    return ret;
+}
+
+int main(){
+
+    int n, m, h=1;
+    scanf("%d %d", &n, &m);
+
+    for(int i=0; i<400001; i++){
+        arr[i].first = 0x7fffffff;
+        arr[i].second = 0;
+    }
+
+    while(h < n) h <<= 1;
+    for(int i=h; i<n+h; i++){
+        scanf("%d", &arr[i].first);
+        arr[i].second = arr[i].first;
+    }
+
+    for(int i=h; i<n+h; i++){
+        int idx = i;
+        while(idx >= 1){
+            idx /= 2;
+            arr[idx].first = min(arr[idx*2].first, arr[idx*2+1].first);
+            arr[idx].second = max(arr[idx*2].second, arr[idx*2+1].second);
+        }
+    }
+
+    for(int i=0; i<m; i++){
+        int a, b;
+        scanf("%d %d", &a, &b);
+
+        pair<int, int> res = IndexTree(h + a - 1, h + b - 1);
+        printf("%d %d\n", res.first, res.second);
+    }
+}
