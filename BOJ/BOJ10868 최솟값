@@ -1,0 +1,51 @@
+// https://blog.naver.com/kimh0429/221458802078
+
+#include <iostream>
+#include <algorithm>
+#define mod (0x7fffffff)
+
+using namespace std;
+
+int seg[500001];
+int h = 1;
+
+int IndexTree(int a, int b){
+
+    int ret = 0x7fffffff;
+    while(a <= b){
+        if(a % 2 == 1) ret = min(seg[a], ret);
+        a = (a + 1) / 2;
+        if(b % 2 == 0) ret = min(ret, seg[b]);
+        b = (b - 1) / 2;
+    }
+    return ret;
+}
+
+int main(){
+
+    int n, m;
+    scanf("%d %d", &n, &m);
+
+    for(int i=0; i<500001; i++) seg[i] = mod;
+
+    while(h < n) h <<= 1;
+    for(int i=h; i<h+n; i++)
+        scanf("%d", &seg[i]);
+
+    for(int i=h; i<h+n; i++){
+        int idx = i;
+
+        while(idx > 1){
+            idx /= 2;
+            seg[idx] = min(seg[idx*2], seg[idx*2+1]);
+        }
+    }
+
+    for(int i=0; i<m; i++){
+        int a, b;
+        scanf("%d %d", &a, &b);
+
+        printf("%d\n", IndexTree(h + a - 1, h + b - 1));
+    }
+
+}
