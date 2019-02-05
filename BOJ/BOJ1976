@@ -1,0 +1,52 @@
+// https://blog.naver.com/kimh0429/221458950202
+
+#include <iostream>
+
+using namespace std;
+
+int root[201];
+
+int Find(int a){
+    if(root[a] == a) return a;
+    else return root[a] = Find(root[a]);
+}
+
+int main(){
+
+    int n, m;
+    scanf("%d %d", &n, &m);
+
+    for(int i=1; i<=n; i++) root[i] = i;
+
+    for(int i=1; i<=n; i++){
+        for(int j=1; j<=n; j++){
+            int tmp;
+            scanf("%d", &tmp);
+
+            if(tmp){
+                int iRoot = Find(i);
+                int jRoot = Find(j);
+                root[iRoot] = jRoot;
+            }
+        }
+    }
+
+    bool flag = true;
+    int r;
+    if(m){
+        int tmp;
+        scanf("%d", &tmp);
+        r = Find(tmp);
+    }
+
+    for(int i=1; i<m; i++){
+        int tmp;
+        scanf("%d", &tmp);
+
+        int tr = Find(tmp);
+        if(tr != r) flag = false;
+    }
+
+    if(flag) printf("YES\n");
+    else printf("NO\n");
+}
