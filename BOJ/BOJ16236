@@ -1,0 +1,120 @@
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <string.h>
+
+#define mod (0x7fffffff)
+
+using namespace std;
+
+struct Fish{
+    int y;
+    int x;
+    int cnt;
+    int size;
+
+    bool operator <(const Fish &a)const{
+        if(size != a.size) return size > a.size;
+        else if(y != a.y) return y > a.y;
+        else return x > a.x;
+    }
+};
+Fish bs;
+priority_queue<Fish> pq;
+
+int n;
+int arr[21][21];
+int visited[21][21];
+int dy[4] = {-1, 0, 1, 0};
+int dx[4] = {0, -1, 0, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+bool compare(const Fish &a, const Fish &b){
+    if(a.cnt != b.cnt) return a.cnt < b.cnt;
+    else if(a.y != b.y) return a.y < b.y;
+    else if(a.x != b.x) return a.x < b.x;
+}
+
+void BFS(int y, int x){
+
+    queue<pair<int, int> > q;
+    visited[y][x] = 0;
+    q.push({y, x});
+
+    while(!q.empty()){
+        int fy = q.front().first;
+        int fx = q.front().second;
+        q.pop();
+
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(InRange(ny, nx) && arr[ny][nx] <= bs.size && visited[ny][nx] == -1){
+                visited[ny][nx] = visited[fy][fx] + 1;
+                q.push({ny, nx});
+            }
+        }
+    }
+}
+
+
+int main(){
+
+    scanf("%d", &n);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            scanf("%d", &arr[i][j]);
+
+            if(arr[i][j] == 9){
+                arr[i][j] = 0;
+                bs = {i, j, 0, 2};
+            }
+            else if(arr[i][j]){
+                pq.push({i, j, -1, arr[i][j]});
+            }
+        }
+    }
+
+    int ans = 0;
+    while(!pq.empty()){
+
+        vector<Fish> eat;
+        while(!pq.empty() && pq.top().size < bs.size){
+            eat.push_back(pq.top());
+            pq.pop();
+        }
+
+        if(eat.empty()) break;
+
+        memset(visited, -1, sizeof(visited));
+        BFS(bs.y, bs.x);
+
+        for(int i=0; i<eat.size(); i++){
+            eat[i].cnt = visited[eat[i].y][eat[i].x];
+            if(eat[i].cnt == -1) eat[i].cnt = mod;
+        }
+        sort(eat.begin(), eat.end(), compare);
+
+        if(eat[0].cnt == mod) break;
+        else{
+            bs.y = eat[0].y;
+            bs.x = eat[0].x;
+            bs.cnt++;
+            arr[bs.y][bs.x] = 0;
+            ans += eat[0].cnt;
+
+            if(bs.cnt == bs.size){
+                bs.cnt = 0;
+                bs.size++;
+            }
+
+            for(int i=1; i<eat.size(); i++)
+                pq.push({eat[i]});
+        }
+    }
+    printf("%d\n", ans);
+}
