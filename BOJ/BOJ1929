@@ -1,0 +1,26 @@
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+
+using namespace std;
+
+int n, m;
+bool primeNum[1000001];
+
+int main(){
+
+    scanf("%d %d", &m, &n);
+
+    for(int i=2; i<=n; i++) primeNum[i] = true;
+    for(int i=2; i<=sqrt(n); i++){
+        if(primeNum[i]){
+            for(int j=i*i; j<=n; j+=i)
+                primeNum[j] = false;
+        }
+    }
+
+    for(int i=m; i<=n; i++){
+        if(primeNum[i])printf("%d\n", i);
+    }
+
+}
