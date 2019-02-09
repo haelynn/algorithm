@@ -1,0 +1,31 @@
+#include <iostream>
+#include <math.h>
+#include <algorithm>
+
+using namespace std;
+
+int n, m, sum = 0;
+bool primeNum[10001];
+int minNum = 0x7fffffff;
+
+int main(){
+
+    scanf("%d %d", &m, &n);
+
+    for(int i=2; i<=n; i++) primeNum[i] = true;
+    for(int i=2; i<=sqrt(n); i++){
+        if(primeNum[i]){
+            for(int j=i*i; j<=n; j+=i)
+                primeNum[j] = false;
+        }
+    }
+    for(int i=m; i<=n; i++){
+        if(primeNum[i]){
+            minNum = min(minNum, i);
+            sum += i;
+        }
+    }
+    if(minNum == 0x7fffffff) printf("-1\n");
+    else printf("%d\n%d\n", sum, minNum);
+
+}
