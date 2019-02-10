@@ -1,0 +1,123 @@
+// https://blog.naver.com/kimh0429/221462293571
+
+#include <iostream>
+#include <queue>
+#include <algorithm>
+#define mod (0x7fffffff)
+
+using namespace std;
+
+struct Wood{
+    int y;
+    int x;
+    int dir; // 0:세로 1:가로
+};
+Wood wood, target;
+
+int n;
+int arr[51][51];
+int visited[2][51][51];
+int dy[4] = {-1, 1, 0, 0}; // 상하좌우
+int dx[4] = {0, 0, -1, 1};
+int tY[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+int tX[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+int BFS(){
+
+    queue<Wood> q;
+    visited[wood.dir][wood.y][wood.x] = 1;
+    q.push({wood.y, wood.x, wood.dir});
+
+    while(!q.empty()){
+        int fy = q.front().y;
+        int fx = q.front().x;
+        int fd = q.front().dir;
+        q.pop();
+
+        if(fy == target.y && fx == target.x && fd == target.dir){
+            return visited[fd][fy][fx] - 1;
+        }
+
+        // turn
+        if(!visited[!fd][fy][fx]){
+            bool flag = false;
+            for(int i=0; i<8; i++){
+                int ny = fy + tY[i];
+                int nx = fx + tX[i];
+
+                if(!InRange(ny, nx) || arr[ny][nx]){
+                    flag = true;
+                    break;
+                }
+            }
+            if(!flag){
+                visited[!fd][fy][fx] = visited[fd][fy][fx] + 1;
+                q.push({fy, fx, !fd});
+            }
+        }
+
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(InRange(ny, nx) && !visited[fd][ny][nx] && !arr[ny][nx]){
+                if(fd == 0 && InRange(ny-1, nx) && InRange(ny + 1, nx) && !arr[ny-1][nx] && !arr[ny+1][nx]){ // 세로
+                    visited[fd][ny][nx] = visited[fd][fy][fx] + 1;
+                    q.push({ny, nx, fd});
+                }
+                else if(fd == 1 && InRange(ny, nx-1) && InRange(ny, nx+1) && !arr[ny][nx-1] && !arr[ny][nx+1]){ // 가로
+                    visited[fd][ny][nx] = visited[fd][fy][fx] + 1;
+                    q.push({ny, nx, fd});
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(){
+
+    // input
+    int wy = -1;
+    int ty = -1;
+
+    scanf("%d", &n);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            char tmp;
+            cin >> tmp;
+
+            if(tmp == '1') arr[i][j] = 1;
+            else if(tmp == 'B'){
+                if(wy == -1) wy = i;
+                else if(wy != -1 && wy != mod){
+                    wood.y = i; wood.x = j;
+                    if(wy < i) wood.dir = 0;
+                    else wood.dir = 1;
+
+                    wy = mod;
+                }
+            }
+            else if(tmp == 'E'){
+                if(ty == -1) ty = i;
+                else if(ty != -1 && ty != mod){
+                    target.y = i; target.x = j;
+                    if(ty < i) target.dir = 0;
+                    else target.dir = 1;
+
+                    ty = mod;
+                }
+            }
+
+        }
+    }
+
+    // output
+    printf("%d\n", BFS());
+    return 0;
+}
