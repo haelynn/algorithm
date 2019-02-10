@@ -1,0 +1,146 @@
+// 16:40
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+struct BC{
+    int idx;
+    int y;
+    int x;
+    int c;
+    int p;
+
+    bool operator <(const BC & a)const{
+        return p > a.p;
+    }
+};
+
+int m, a, ans;
+int mA[101], mB[101];
+BC bc[8];
+vector<pair<int, int> > map[11][11]; // idx, power
+int dy[5] = {0, -1, 0, 1, 0}; // 상우하좌
+int dx[5] = {0, 0, 1, 0, -1};
+
+bool InRange(int y, int x){
+    return y >= 1 && y <= 10 && x >= 1 && x <= 10;
+}
+
+int main(){
+
+    int T;
+    scanf("%d", &T);
+
+    for(int t=1; t<=T; t++){
+
+        // input
+        scanf("%d %d", &m, &a);
+        for(int i=0; i<m; i++) scanf("%d", &mA[i]);
+        for(int i=0; i<m; i++) scanf("%d", &mB[i]);
+        for(int i=0; i<a; i++){
+            int x, y, c, p;
+            scanf("%d %d %d %d", &x, &y, &c, &p);
+            bc[i] = {i, y, x, c, p};
+        }
+        sort(bc, bc+a);
+
+        // init
+        for(int i=1; i<=10; i++){
+            for(int j=1; j<=10; j++){
+                map[i][j].clear();
+            }
+        }
+
+        // draw map
+        for(int k=0; k<a; k++){
+            int tmp = 0;
+            int y = bc[k].y - bc[k].c;
+            for(int i = 0; i<= bc[k].c; i++){
+                for(int j = tmp; j <= tmp*-1; j++){
+                    if(InRange(y, bc[k].x + j)) map[y][bc[k].x + j].push_back({bc[k].idx, bc[k].p});
+                }
+                y++;
+                tmp--;
+            }
+            tmp += 2;
+            for(int i=0; i<bc[k].c; i++){
+                for(int j=tmp; j<=tmp*-1; j++){
+                    if(InRange(y, bc[k].x + j)) map[y][bc[k].x + j].push_back({bc[k].idx, bc[k].p});
+                }
+                y++;
+                tmp++;
+            }
+        }
+
+        int sumA = 0, sumB = 0;
+        // moveAB
+
+        int ay = 1, ax = 1, by = 10, bx = 10;
+        if(map[ay][ax].size() > 0) sumA += map[ay][ax][0].second;
+        if(map[by][bx].size() > 0) sumB += map[by][bx][0].second;
+        //printf("%d %d %d\n", 0, sumA, sumB);
+
+        for(int i=0; i<m; i++){
+            ay += dy[mA[i]]; ax += dx[mA[i]];
+            by += dy[mB[i]]; bx += dx[mB[i]];
+
+            int aSize = map[ay][ax].size();
+            int bSize = map[by][bx].size();
+            int aIdx = -1, bIdx = -1;
+
+            if(aSize > 0) aIdx = map[ay][ax][0].first;
+            if(bSize > 0) bIdx = map[by][bx][0].first;
+
+            if(aIdx == -1 && bIdx == -1);
+
+            else if(aIdx == -1 && bIdx > -1) sumB += map[by][bx][0].second;
+            else if(aIdx > -1 && bIdx == -1) sumA += map[ay][ax][0].second;
+            else if(aIdx == bIdx){
+                int a1 = map[ay][ax][0].second;
+                int b1 = map[by][bx][0].second;
+
+                if(aSize > 1 && bSize == 1){
+                    sumB += b1;
+                    sumA += map[ay][ax][1].second;
+                }
+
+                else if(aSize == 1 && bSize > 1){
+                    sumA += a1;
+                    sumB += map[by][bx][1].second;
+                }
+
+                else if(aSize == 1 && bSize == 1){
+                    sumA += map[ay][ax][0].second / 2;
+                    sumB += map[by][bx][0].second / 2;
+                }
+
+                else if(aSize > 1 && bSize > 1){
+                    int a2 = map[ay][ax][1].second;
+                    int b2 = map[by][bx][1].second;
+
+                    if(a1 + b2 > a2 + b1){
+                        sumA += a1;
+                        sumB += b2;
+                    }
+                    else{
+                        sumA += a2;
+                        sumB += b1;
+                    }
+                }
+            }
+            else if(aIdx != bIdx){
+                sumA += map[ay][ax][0].second;
+                sumB += map[by][bx][0].second;
+            }
+
+            //printf("%d %d %d\n", i+1, sumA, sumB);
+        }
+
+        // output
+        printf("#%d %d\n", t, sumA + sumB);
+    }
+
+}
