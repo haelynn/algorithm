@@ -1,0 +1,42 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+int main(){
+
+    while(true){
+
+        string code;
+        getline(cin, code);
+        if(code == "#") break;
+
+        stack<string> s;
+        bool legal = true;
+
+        for(int i=0; i<code.size();){
+            if(code[i] == '<'){
+                string in = code.substr(i+1, code.find('>', i)-i-1);
+                string tag = in.substr(0, in.find(' '));
+
+                if(in[0] == '/'){
+                    tag = tag.substr(1);
+                    if(s.empty() || tag != s.top()){
+                        legal = false;
+                        break;
+                    }
+                    s.pop();
+                }
+
+                else if(in.back() != '/') s.push(tag);
+                i+=in.size()+2;
+            }
+            else i++;
+        }
+
+        if(!s.empty()) legal = false;
+        if(legal) printf("legal\n");
+        else printf("illegal\n");
+    }
+}
