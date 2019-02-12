@@ -1,0 +1,52 @@
+// https://blog.naver.com/kimh0429/221463994344
+
+#include <iostream>
+#include <algorithm>
+#include <string.h>
+
+using namespace std;
+
+int l, c;
+char str[16];
+bool visited[16];
+
+void Solution(int cnt, int idx){
+
+    if(idx == c+1) return;
+    if(cnt == l){
+
+        bool vowel = false; // 모음
+        int cons = 0; // 자음
+        string ans = "";
+
+        for(int i=0; i<c; i++){
+            if(visited[i]){
+                ans += str[i];
+                if(str[i] == 'a' || str[i] == 'e' || str[i] == 'i' || str[i] == 'o' || str[i] == 'u') vowel = true;
+                else cons++;
+            }
+        }
+        if(vowel && cons > 1) cout << ans << "\n";
+        return;
+    }
+
+    visited[idx] = true;
+    Solution(cnt+1, idx+1);
+
+    visited[idx] = false;
+    Solution(cnt, idx+1);
+}
+
+int main(){
+
+    scanf("%d %d", &l, &c);
+
+    for(int i=0; i<c; i++) cin >> str[i];
+    sort(str, str+c);
+
+    for(int i=0; i<=c-l; i++){
+        visited[i] = true;
+        Solution(1, i+1);
+        visited[i] = false;
+    }
+}
