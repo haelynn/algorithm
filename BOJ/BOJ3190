@@ -1,0 +1,113 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+struct Snake{
+    int y = 0;
+    int x = 0;
+    int dir = 0;
+    int idx = 0;
+};
+Snake head, tail;
+
+int n, k, l;
+int smove[101][101] = {0, }; // snake : 1, apple : 2
+Snake marr[20001];
+vector<pair<int, char> > tmp;
+int dy[4] = {0, -1, 0, 1};
+int dx[4] = {1, 0, -1, 0};
+
+bool InRange(int y, int x){
+    return y >= 1 && y <= n && x >= 1 && x <= n;
+}
+
+int retDir(int dir){
+    if(dir >= 0 && dir <= 3) return dir;
+    else if(dir > 3) return dir % 4;
+}
+
+void makeMArr(){
+
+    if(tmp[0].first > n) return;
+    int y = 1, x = tmp[0].first + 1, dir = 0, pre = tmp[0].first;
+
+    if(tmp[0].second == 'D') dir = 3;
+    else dir = 1;
+
+    marr[pre] = {y, x, dir, 1};
+
+    for(int i=1; i<l; i++){
+        int m = tmp[i].first - pre;
+
+        y += dy[dir] * m;
+        x += dx[dir] * m;
+
+        if(!InRange(y, x)) return;
+
+        if(tmp[i].second == 'D') dir = retDir(dir + 3);
+        else dir = retDir(dir + 1);
+        pre = tmp[i].first;
+        marr[pre] = {y, x, dir, i+1};
+    }
+}
+
+int main(){
+
+    // input
+    scanf("%d %d", &n, &k);
+    for(int i=0; i<k; i++){
+        int y, x;
+        scanf("%d %d", &y, &x);
+
+        smove[y][x] = 2;
+    }
+
+    scanf("%d", &l);
+    for(int i=0; i<l; i++){
+        int t; char c;
+        scanf("%d %c", &t, &c);
+
+        tmp.push_back({t, c});
+    }
+    makeMArr(); // y, x, dir, idx
+
+    // moveSnake
+    head = {1, 1, 0, 0}; // y, x, dir, idx
+    tail = {1, 1, 0, 0};
+    smove[1][1] = 1;
+
+    int cnt = 1;
+    int len = 0;
+    while(true){
+        head.y += dy[head.dir];
+        head.x += dx[head.dir];
+
+        if(!InRange(head.y, head.x) || smove[head.y][head.x] == 1) break;
+
+        int hy = head.y, hx = head.x, ty = tail.y, tx = tail.x;
+
+        bool flag = false;
+        if(smove[hy][hx] == 2) flag = true;
+        smove[hy][hx] = 1;
+
+        if(marr[cnt].y == hy && marr[cnt].x == hx){
+            head.dir = marr[cnt].dir;
+            head.idx = marr[cnt].idx;
+        }
+
+        if(!flag){
+            smove[ty][tx] = 0;
+            if(marr[cnt-len-1].y == ty && marr[cnt-len-1].x == tx){
+                tail.dir = marr[cnt-len-1].dir;
+            }
+
+            tail.y += dy[tail.dir];
+            tail.x += dx[tail.dir];
+        }
+        else len++;
+        cnt++;
+    }
+
+    printf("%d\n", cnt);
+}
