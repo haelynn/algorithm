@@ -1,0 +1,25 @@
+#include <vector>
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+long long solution(int N) {
+    long long answer = 0;
+    
+    vector<int> primeNum;
+    primeNum.resize(N+1);
+    
+    int len = sqrt(N);
+    
+    for(int i=2; i <= len; i++){
+        if(primeNum[i]) continue;
+        for(int j=i+i; j<=N; j+=i) primeNum[j] = 1;
+    }
+    
+    for(int i=2; i<=N; i++){
+        if(!primeNum[i]) answer+=i;
+    }
+    
+    return answer;
+}
