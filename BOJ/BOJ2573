@@ -1,0 +1,92 @@
+// https://blog.naver.com/kimh0429/221467931729
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+struct Ice{
+    int y;
+    int x;
+    int h;
+};
+
+int n, m;
+vector<Ice> ice, nIce;
+int arr[301][301] = {0, };
+int visited[301][301] = {0, };
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < m;
+}
+
+void BFS(Ice mIce){
+
+    queue<Ice> q;
+    q.push(mIce);
+    visited[mIce.y][mIce.x]++;
+
+    while(!q.empty()){
+        int fy = q.front().y;
+        int fx = q.front().x;
+        int fh = q.front().h;
+        q.pop();
+
+        int cnt = 0;
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(!InRange(ny, nx)) continue;
+            if(!visited[ny][nx] && arr[ny][nx] > 0){
+                q.push({ny, nx, arr[ny][nx]});
+                visited[ny][nx]++;
+            }
+            else if(!arr[ny][nx]) cnt++;
+        }
+        nIce.push_back({fy, fx, fh-cnt});
+    }
+}
+
+int main(){
+
+    scanf("%d %d", &n, &m);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            scanf("%d", &arr[i][j]);
+
+            if(arr[i][j]) ice.push_back({i, j, arr[i][j]});
+        }
+    }
+
+    int ans = 0;
+    while(!ice.empty()){
+
+        BFS(ice[0]);
+        for(int i=1; i<ice.size(); i++){
+            if(!visited[ice[i].y][ice[i].x]){
+                printf("%d\n", ans);
+                return 0;
+            }
+        }
+
+        for(int i=0; i<ice.size(); i++) visited[ice[i].y][ice[i].x] = 0;
+        ice.clear();
+
+        for(int i=0; i<nIce.size(); i++){
+            if(nIce[i].h > 0) {
+                ice.push_back(nIce[i]);
+                arr[nIce[i].y][nIce[i].x] = nIce[i].h;
+            }
+            else arr[nIce[i].y][nIce[i].x] = 0;
+        }
+        nIce.clear();
+        ans++;
+    }
+
+    printf("0\n");
+}
