@@ -1,0 +1,90 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#define mod (0x7fffffff)
+
+using namespace std;
+
+struct Node{
+    int v;
+    int w;
+
+    bool operator <(const Node & node)const{
+        return w > node.w;
+    }
+};
+
+int n, e;
+int start[2], v[2];
+int vertax[2][2];
+int d[801];
+vector<pair<int, int> > graph[801];
+
+void Dij(int from, int state){
+
+    for(int i=1; i<=n; i++) d[i] = mod;
+    d[from] = 0;
+
+    priority_queue<Node> pq;
+    pq.push({from, 0});
+
+    while(!pq.empty()){
+        int now = pq.top().v;
+        int weight = pq.top().w;
+        pq.pop();
+
+        for(int i=0; i<graph[now].size(); i++){
+            int next = graph[now][i].first;
+            int nextW = graph[now][i].second;
+
+            if(d[next] > nextW + weight){
+                pq.push({next, nextW+weight});
+                d[next] = nextW + weight;
+            }
+        }
+    }
+
+    if(state == -1){
+        start[0] = d[v[0]];
+        start[1] = d[v[1]];
+    }
+    else{
+        vertax[state][0] = d[v[!state]];
+        vertax[state][1] = d[n];
+    }
+}
+
+int main(){
+
+    // input
+    scanf("%d %d", &n, &e);
+    for(int i=0; i<e; i++){
+        int from, to, weight;
+        scanf("%d %d %d", &from, &to, &weight);
+
+        graph[from].push_back({to, weight});
+        graph[to].push_back({from, weight});
+    }
+
+    scanf("%d %d", &v[0], &v[1]);
+
+    Dij(1, -1);
+    Dij(v[0], 0);
+    Dij(v[1], 1);
+
+    int tmp = mod;
+    if(start[0] != mod && vertax[0][0] != mod && vertax[1][1] != mod){
+        int ans = start[0] + vertax[0][0] + vertax[1][1];
+        tmp = ans;
+    }
+
+    int tmp2 = mod;
+    if(start[1] != mod && vertax[1][0] != mod && vertax[0][1] != mod){
+        int ans = start[1] + vertax[1][0] + vertax[0][1];
+        tmp2 = ans;
+    }
+
+    if(tmp == mod && tmp2 == mod) printf("-1\n");
+    else printf("%d\n", min(tmp, tmp2));
+}
