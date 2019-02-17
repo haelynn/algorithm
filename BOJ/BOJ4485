@@ -1,0 +1,67 @@
+// https://blog.naver.com/kimh0429/221467956746
+
+#define mod (0x7fffffff)
+#include <iostream>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+struct Node{
+    int y;
+    int x;
+    int w;
+
+    bool operator<(const Node &a)const{
+        return w > a.w;
+    }
+};
+priority_queue<Node> pq;
+
+int n;
+int arr[125][125];
+int d[125][125];
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+int main(){
+
+    int t = 1;
+    while(true){
+
+        scanf("%d", &n);
+        if(!n) break;
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                scanf("%d", &arr[i][j]);
+                d[i][j] = mod;
+            }
+        }
+        d[0][0] = arr[0][0];
+        pq.push({0, 0, arr[0][0]});
+
+        while(!pq.empty()){
+            Node node = pq.top();
+            pq.pop();
+
+            for(int i=0; i<4; i++){
+                int ny = node.y + dy[i];
+                int nx = node.x + dx[i];
+                int weight = node.w + arr[ny][nx];
+
+                if(InRange(ny, nx) && d[ny][nx] > weight){
+                    d[ny][nx] = weight;
+                    pq.push({ny, nx, weight});
+                }
+            }
+        }
+
+        // output
+        printf("Problem %d: %d\n", t++, d[n-1][n-1]);
+    }
+}
