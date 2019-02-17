@@ -1,0 +1,97 @@
+// 17:20 ~
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int n, ans;
+int arr[101][101];
+vector<pair<int, int> > place;
+vector<pair<int, int> > worm[5];
+int dy[4] = {0, -1, 0, 1};
+int dx[4] = {1, 0, -1, 0};
+int block[6][4] ={0, 0, 0, 0,
+                  2, 3, 1, 0,
+                  2, 0, 3, 1,
+                  3, 2, 0, 1,
+                  1, 3, 0, 2,
+                  2, 3, 0, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+void Solution(int y, int x, int dir){
+
+    int cnt = 0;
+    int ny = y;
+    int nx = x;
+
+    while(true){
+
+        ny += dy[dir];
+        nx += dx[dir];
+
+        if((ny == y && nx == x) || arr[ny][nx] == -1) break;
+
+        if(!InRange(ny, nx)){ // 벽
+            cnt++;
+            dir = block[5][dir];
+        }
+        else if(arr[ny][nx] > 5){ // 웜홀
+            int tmp = arr[ny][nx] - 6;
+            if(worm[tmp][0].first == ny && worm[tmp][0].second == nx){
+                ny = worm[tmp][1].first;
+                nx = worm[tmp][1].second;
+            }
+            else{
+                ny = worm[tmp][0].first;
+                nx = worm[tmp][0].second;
+            }
+        }
+        else if(arr[ny][nx]){ // 블록
+            cnt++;
+            dir = block[arr[ny][nx]][dir];
+        }
+
+        if((ny == y && nx == x) || arr[ny][nx] == -1) break;
+    }
+
+    ans = max(cnt, ans);
+}
+
+int main(){
+
+    int T;
+    scanf("%d", &T);
+
+    for(int t=1; t<=T; t++){
+
+        ans = 0;
+
+        // input
+        scanf("%d", &n);
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                scanf("%d", &arr[i][j]);
+
+                if(arr[i][j] > 5) worm[arr[i][j] - 6].push_back({i, j});
+                else if(!arr[i][j]) place.push_back({i, j});
+            }
+        }
+
+        for(int i=0; i<place.size(); i++){
+            for(int j=0; j<4; j++){
+                Solution(place[i].first, place[i].second, j);
+
+            }
+        }
+
+        place.clear();
+        for(int i=0; i<5; i++) worm[i].clear();
+
+        // output
+        printf("#%d %d\n", t, ans);
+    }
+}
