@@ -1,0 +1,35 @@
+#define ll long long
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int n, a, b;
+ll cnt = 0;
+vector<int> v;
+
+int main(){
+
+    scanf("%d", &n);
+    for(int i=0; i<n; i++){
+        int tmp;
+        scanf("%d", &tmp);
+
+        v.push_back(tmp);
+    }
+    scanf("%d %d", &a, &b);
+
+    for(int i=0; i<n; i++){
+        cnt++;
+        v[i] -= a;
+
+        if(v[i] <= 0) continue;
+
+        int tmp = v[i] % b;
+        cnt += v[i] / b;
+
+        if(tmp) cnt++;
+    }
+
+    printf("%lld\n", cnt);
+}
