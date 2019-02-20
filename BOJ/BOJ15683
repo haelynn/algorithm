@@ -1,0 +1,95 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+struct CCTV{
+    int y;
+    int x;
+    int n;
+    int dir;
+};
+
+int n, m, ans = 0x7fffffff, cctvNum = 0;
+int arr[8][8];
+int dy[4] = {0, 1, 0, -1};
+int dx[4] = {1, 0, -1, 0};
+int camIdx[6] = {0, 4, 2, 4, 4, 1}; // 카메라 도는 횟수 및 방향
+int camN[6] = {0, 1, 2, 2, 3, 4}; // 카메라 시각 수
+vector<CCTV> cctv;
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < m;
+}
+
+int InDirection(int dir){
+    if(dir > 3) return dir % 4;
+    else return dir;
+}
+
+void CheckCameraSight(){
+
+    int visited[8][8] = {0, };
+    for(int i=0; i<cctvNum; i++){
+        int y = cctv[i].y;
+        int x = cctv[i].x;
+        int dir = cctv[i].dir;
+        int tmp = 0;
+
+        for(int j=0; j<camN[cctv[i].n]; j++){
+            dir = InDirection(dir + tmp);
+            if(cctv[i].n == 2) tmp+=2;
+            else tmp++;
+
+            int ny = y + dy[dir];
+            int nx = x + dx[dir];
+            while(InRange(ny, nx) && arr[ny][nx] != 6){
+                visited[ny][nx] = 1;
+                ny += dy[dir];
+                nx += dx[dir];
+            }
+        }
+    }
+
+    int cnt = 0;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            if(arr[i][j] == 0 && !visited[i][j]) cnt++;
+        }
+    }
+
+    ans = min(ans, cnt);
+}
+
+void MoveCamera(int idx){
+
+    if(idx == cctvNum){
+        CheckCameraSight();
+        return;
+    }
+
+    int tmp = cctv[idx].n;
+    for(int i=0; i<camIdx[tmp]; i++){
+        cctv[idx].dir = i;
+        MoveCamera(idx+1);
+    }
+}
+
+int main(){
+
+    scanf("%d %d", &n, &m);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            scanf("%d", &arr[i][j]);
+
+            if(arr[i][j] && arr[i][j] != 6) cctv.push_back({i, j, arr[i][j], -1});
+        }
+    }
+    cctvNum = cctv.size();
+    MoveCamera(0);
+
+
+    if(ans != 0x7fffffff) printf("%d\n", ans);
+    else printf("0\n");
+}
