@@ -1,0 +1,35 @@
+#include <iostream>
+
+using namespace std;
+
+int n;
+
+bool CheckPrime(int num){
+    for(int i=2; i*i <= num; i++){
+        if(num % i == 0) return false;
+    }
+    return true;
+}
+
+void Solution(int num, int cnt){
+
+    if(!cnt){
+        printf("%d\n", num);
+        return;
+    }
+
+    for(int i=1; i<10; i+=2){
+        int tmp = num * 10 + i;
+        if(CheckPrime(tmp)) Solution(tmp, cnt-1);
+    }
+}
+
+int main(){
+
+    scanf("%d", &n);
+    Solution(2, n-1);
+    Solution(3, n-1);
+    Solution(5, n-1);
+    Solution(7, n-1);
+
+}
