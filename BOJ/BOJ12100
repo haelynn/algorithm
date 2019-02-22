@@ -1,0 +1,137 @@
+// 20:30 ~
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int n, ans = 0;
+int arr[21][21];
+int dy[4] = {-1, 0, 1, 0}; // ^ < v >
+int dx[4] = {0, -1, 0, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+void MoveTable(string str){
+
+    pair<int, char> mArr[21][21];
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++)
+            mArr[i][j] = {arr[i][j], false};
+    }
+
+    for(int k=0; k<5; k++){
+        int dir = str[k] - '0';
+        int sy, sx, ey, ex, flag;
+
+        if(dir == 0 || dir == 2){
+            if(dir == 0){
+                sy = 0; ey = n; flag = 1;
+            }
+            else{
+                sy = n-1; ey = -1; flag = -1;
+            }
+
+            for(int x = 0; x < n; x++){
+                for(int y=0; y<n; y++) mArr[y][x].second = false;
+                int y = sy;
+                while(true){
+                    y += flag;
+                    if(y == ey) break;
+                    if(!mArr[y][x].first) continue;
+
+                    int fy = y, fx = x;
+                    int ny = y + dy[dir];
+                    int nx = x + dx[dir];
+
+                    while(InRange(ny, nx)){
+                        if(!mArr[ny][nx].first){
+                            mArr[ny][nx] = mArr[fy][fx];
+                            mArr[fy][fx] = {0, 0};
+                        }
+                        else if(mArr[ny][nx].first == mArr[fy][fx].first && !mArr[ny][nx].second && !mArr[fy][fx].second){
+                            mArr[ny][nx] = {mArr[fy][fx].first * 2, true};
+                            mArr[fy][fx] = {0, 0};
+                            break;
+                        }
+                        fy = ny; fx = nx;
+                        ny += dy[dir];
+                        nx += dx[dir];
+                    }
+                }
+            }
+        }
+
+        else if(dir == 1 || dir == 3){ // < >
+            if(dir == 1){
+                sx = 0; ex = n; flag = 1;
+            }
+            else{
+                sx = n-1; ex = -1; flag = -1;
+            }
+
+            for(int y = 0; y < n; y++){
+                int x = sx;
+                for(int x=0; x<n; x++) mArr[y][x].second = false;
+                while(true){
+                    x += flag;
+                    if(x == ex) break;
+                    if(!mArr[y][x].first) continue;
+
+                    int fy = y, fx = x;
+                    int ny = y + dy[dir];
+                    int nx = x + dx[dir];
+
+                    while(InRange(ny, nx)){
+                        if(!mArr[ny][nx].first){
+                            mArr[ny][nx] = mArr[fy][fx];
+                            mArr[fy][fx] = {0, 0};
+                        }
+                        else if(mArr[ny][nx].first == mArr[fy][fx].first && !mArr[ny][nx].second && !mArr[fy][fx].second){
+                            mArr[ny][nx] = {mArr[fy][fx].first * 2, true};
+                            mArr[fy][fx] = {0, 0};
+                            break;
+                        }
+                        fy = ny; fx = nx;
+                        ny += dy[dir];
+                        nx += dx[dir];
+                    }
+                }
+            }
+        }
+    }
+
+    int maxN = 0;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++)
+            maxN = max(maxN, mArr[i][j].first);
+    }
+
+    ans = max(maxN, ans);
+}
+
+void DFS(string str, int cnt){
+
+    if(cnt == 5){
+        MoveTable(str);
+        return;
+    }
+
+    for(int i=0; i<4; i++){
+        char tmp = i + '0';
+        DFS(str+tmp, cnt+1);
+    }
+}
+
+int main(){
+
+    scanf("%d", &n);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            scanf("%d", &arr[i][j]);
+        }
+    }
+    DFS("", 0);
+    printf("%d\n", ans);
+}
