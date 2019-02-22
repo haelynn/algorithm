@@ -1,0 +1,66 @@
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+int n;
+pair<int, int> king, stone;
+int dy[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+int dx[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+bool InRange(int y, int x){
+    return y > 0 && y < 9 && x >= 0 && x < 8;
+}
+
+int main(){
+
+    std::ios::sync_with_stdio(false);
+    char kr, sr;
+    int kc, sc;
+
+    cin >> kr >> kc >> sr >> sc;
+
+    king.first = 9 - kc;
+    king.second = kr - 'A';
+    stone.first = 9 - sc;
+    stone.second = sr - 'A';
+
+    cin >> n;
+
+    while(n--){
+        char input[3];
+        int dir;
+        cin >> input;
+
+        if(input[0] == 'R') {
+            if(strlen(input) == 1) dir = 4;
+            else if(input[1] == 'T') dir = 2;
+            else dir = 7;
+        }
+        else if(input[0] == 'L'){
+            if(strlen(input) == 1) dir = 3;
+            else if(input[1] == 'T') dir = 0;
+            else dir = 5;
+        }
+        else if(input[0] == 'B') dir = 6;
+        else dir = 1;
+
+        int ky = king.first + dy[dir];
+        int kx = king.second + dx[dir];
+        int sy = stone.first + dy[dir];
+        int sx = stone.second + dx[dir];
+
+        if(!InRange(ky, kx)) continue;
+        else if(ky == stone.first && kx == stone.second){
+            if(InRange(sy, sx)){
+                stone = {sy, sx};
+                king = {ky, kx};
+            }
+        }
+        else king = {ky, kx};
+    }
+
+    cout << char(king.second + 'A') << 9 - king.first << "\n";
+    cout << char(stone.second + 'A') << 9 - stone.first;
+}
