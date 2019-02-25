@@ -1,0 +1,33 @@
+#include <iostream>
+
+using namespace std;
+
+int main(){
+
+    int n;
+    scanf("%d", &n);
+
+    int cnt = 0;
+    int num = n;
+
+    do{
+        int pre = num;
+        int tmp;
+
+        if(num > 9){
+            tmp = 0;
+            while(num){
+                tmp += num % 10;
+                num /= 10;
+            }
+            num = tmp;
+        }
+
+        tmp = (pre % 10) * 10 + (num % 10);
+        num = tmp;
+
+        cnt++;
+    }while(num != n);
+
+    printf("%d\n", cnt);
+}
