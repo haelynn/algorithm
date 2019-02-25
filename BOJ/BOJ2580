@@ -1,0 +1,72 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int arr[10][10];
+vector<pair<int, int> > sudoku;
+
+bool CVertical(int x, int n){
+
+    for(int i=0; i<9; i++){
+        if(arr[i][x] == n) return false;
+    }
+    return true;
+}
+
+bool CHorizontal(int y, int n){
+
+    for(int i=0; i<9; i++){
+        if(arr[y][i] == n) return false;
+    }
+    return true;
+}
+
+bool CSquare(int y, int x, int n){
+
+    y = y/3;
+    x = x/3;
+
+    for(int i = y * 3; i < (y * 3) + 3; i++){
+        for(int j = x * 3; j < (x * 3) + 3; j++){
+            if(arr[i][j] == n) return false;
+        }
+    }
+    return true;
+}
+
+void DFS(int idx){
+
+    if(idx == sudoku.size()){
+        for(int i=0; i<9; i++){
+            for(int j=0; j<9; j++)
+                printf("%d ", arr[i][j]);
+            printf("\n");
+        }
+
+        exit(0);
+    }
+
+    for(int i=1; i<10; i++){
+        int y = sudoku[idx].first;
+        int x = sudoku[idx].second;
+
+        if(CHorizontal(y, i) && CVertical(x, i) && CSquare(y, x, i)){
+            arr[y][x] = i;
+            DFS(idx+1);
+            arr[y][x] = 0;
+        }
+    }
+}
+
+int main(){
+
+    for(int i=0; i<9; i++){
+        for(int j=0; j<9; j++){
+            scanf("%d", &arr[i][j]);
+
+            if(!arr[i][j]) sudoku.push_back({i, j});
+        }
+    }
+
+    DFS(0);
+}
