@@ -1,0 +1,73 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int n;
+string s;
+int keypad[26];
+
+int main() {
+
+	std::ios::sync_with_stdio(false);
+
+	//printf("%d\n", 'b' - 97);
+	//printf("%d", '0' - 48);
+
+	int tc;
+	cin >> tc;
+
+	// init alphabet status
+	int cnt = 0, keypadCounter = 2;
+	bool flag = false;
+	for (int i = 0; i < 26; i++) {
+		cnt++;
+		keypad[i] = keypadCounter;
+
+		if (cnt == 3 && keypadCounter != 7 && keypadCounter != 9) {
+			cnt = 0;
+			keypadCounter++;
+		}
+
+		if (flag) {
+			keypadCounter++;
+			cnt = 0;
+			flag = false;
+		}
+
+		if (cnt == 3 && (keypadCounter == 7 || keypadCounter == 9))
+			flag = true;
+	}
+
+
+	for(int t=1; t<=tc; t++) {
+		cin >> s >> n;
+
+		int res = 0;
+
+		for (int i = 0; i < n; i++) {
+
+			string word;
+			cin >> word;
+
+			if (word.length() != s.length()) continue;
+
+			flag = false;
+			for (int i = 0; i < word.length(); i++) {
+				int wordInt = word.at(i) - 97;
+				int sInt = s.at(i) - 48;
+
+				if (keypad[wordInt] != sInt) {
+					flag = true;
+					break;
+				}
+			}
+
+			if (!flag) res++;
+		}
+
+		cout << "#" << t << " " << res << "\n";
+	}
+
+	return 0;
+}
