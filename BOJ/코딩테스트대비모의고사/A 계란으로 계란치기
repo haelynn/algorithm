@@ -1,0 +1,62 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+typedef struct Egg{
+    int w;
+    int s;
+};
+
+int n;
+int ans = 0;
+Egg egg[9];
+
+void DFS(int idx){
+
+    if(idx == n) {
+
+        int cnt = 0;
+        for(int i=0; i<n; i++){
+            if(egg[i].s <= 0) cnt++;
+        }
+
+        ans = max(cnt, ans);
+        return;
+    }
+
+    if(egg[idx].s <= 0) DFS(idx+1);
+    else{
+        bool flag = false;
+        for(int i = 0; i<n; i++){
+            if(i == idx) continue;
+            if(egg[i].s > 0){
+                egg[i].s -= egg[idx].w;
+                egg[idx].s -= egg[i].w;
+                flag = true;
+
+                DFS(idx+1);
+
+                egg[i].s += egg[idx].w;
+                egg[idx].s += egg[i].w;
+            }
+        }
+        if(!flag) DFS(idx+1);
+    }
+
+}
+
+int main(){
+
+    scanf("%d", &n);
+    for(int i=0; i<n; i++){
+        int w, s;
+        scanf("%d %d", &s, &w);
+
+        egg[i] = {w, s};
+    }
+
+    DFS(0);
+    printf("%d\n", ans);
+
+}
