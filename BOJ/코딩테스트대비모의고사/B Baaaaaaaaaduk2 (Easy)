@@ -1,0 +1,140 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+typedef struct Enemy{
+    int y;
+    int x;
+    int cnt;
+};
+
+queue<pair<int, int> > q;
+vector<pair<int, int> > area;
+vector<Enemy> enemy;
+int n, m, ans = 0;
+int winC = 3;
+int arr[21][21];
+int visited[21][21] = {0, };
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < m;
+}
+
+void CheckWin(){
+
+    int tmp = 0;
+    for(int i=0; i<enemy.size(); i++){
+
+        Enemy e = enemy[i];
+        int ttt = q.size();
+        q.push({enemy[i].y, enemy[i].x});
+        visited[enemy[i].y][enemy[i].x] = winC;
+
+        int cnt = 1;
+        while(!q.empty()){
+            int fy = q.front().first;
+            int fx = q.front().second;
+            q.pop();
+
+            for(int j=0; j<4; j++){
+                int ny = fy + dy[j];
+                int nx = fx + dx[j];
+
+                if(InRange(ny, nx) && arr[ny][nx] != 1 && visited[ny][nx] != winC){
+                    q.push({ny, nx});
+                    visited[ny][nx] = winC;
+                    cnt++;
+                }
+            }
+
+            if(cnt > enemy[i].cnt) break;
+        }
+
+        if(cnt == enemy[i].cnt) tmp += cnt;
+        while(!q.empty())q.pop();
+
+        winC++;
+    }
+
+    ans = max(ans, tmp);
+}
+
+void BFS(){
+
+    for(int i=0; i<enemy.size(); i++){
+
+        if(visited[enemy[i].y][enemy[i].x]) continue;
+
+        int cnt = 1;
+        q.push({enemy[i].y, enemy[i].x});
+        visited[enemy[i].y][enemy[i].x] = 1;
+
+        while(!q.empty()){
+            int fy = q.front().first;
+            int fx = q.front().second;
+            q.pop();
+
+            for(int j=0; j<4; j++){
+                int ny = fy + dy[j];
+                int nx = fx + dx[j];
+
+                if(InRange(ny, nx) && arr[ny][nx] == 2 && !visited[ny][nx]){
+                    q.push({ny, nx});
+                    visited[ny][nx] = 1;
+                    cnt++;
+                }
+            }
+        }
+
+        enemy[i].cnt = cnt;
+    }
+
+    vector<Enemy> tmp;
+    for(int i=0; i<enemy.size(); i++){
+        if(enemy[i].cnt) tmp.push_back(enemy[i]);
+    }
+
+    enemy.clear();
+    for(int i=0; i<tmp.size(); i++)
+        enemy.push_back(tmp[i]);
+}
+
+void DFS(int idx, int cnt){
+
+    if(idx > area.size()) return;
+    if(cnt == 2){
+        CheckWin();
+        return;
+    }
+
+    if(idx < area.size()){
+        arr[area[idx].first][area[idx].second] = 1;
+        DFS(idx+1, cnt+1);
+        arr[area[idx].first][area[idx].second] = 0;
+    }
+
+    DFS(idx+1, cnt);
+}
+
+int main(){
+
+    scanf("%d %d", &n, &m);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            scanf("%d", &arr[i][j]);
+
+            if(!arr[i][j]) area.push_back({i, j});
+            if(arr[i][j] == 2) enemy.push_back({i, j, 0});
+        }
+    }
+
+    BFS();
+
+    DFS(0, 0);
+    printf("%d\n", ans);
+}
