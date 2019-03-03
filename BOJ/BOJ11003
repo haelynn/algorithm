@@ -1,0 +1,25 @@
+#include <iostream>
+#include <deque>
+#include <algorithm>
+
+using namespace std;
+
+int main(){
+
+    int n, l, a;
+    scanf("%d %d", &n, &l);
+
+    deque<pair<int, int> > dq;
+    for(int i=0; i<n; i++){
+        while(!dq.empty() && dq.front().second <= i-l)
+            dq.pop_front();
+
+        scanf("%d", &a);
+        while(!dq.empty() && dq.back().first >= a)
+            dq.pop_back();
+
+        dq.push_back({a, i});
+        printf("%d ", dq.front().first);
+    }
+    printf("\n");
+}
