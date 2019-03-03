@@ -1,0 +1,51 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int r, c;
+char arr[501][501];
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, 1, -1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < r && x >= 0 && x < c;
+}
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> r >> c;
+    for(int i=0; i<r; i++) {
+        for (int j = 0; j < c; j++) {
+            cin >> arr[i][j];
+        }
+    }
+
+    for(int i=0; i<r; i++){
+        for(int j=0; j<c; j++){
+            for(int d=0; d<4; d++){
+                int ny = i + dy[d];
+                int nx = j + dx[d];
+
+                if(!InRange(ny, nx)) continue;
+                if(arr[i][j] == 'S' && arr[ny][nx] == 'W'){
+                    cout << 0 <<"\n";
+                    return 0;
+                }
+            }
+        }
+    }
+
+    cout << 1 << "\n";
+    for(int i=0; i<r; i++){
+        for(int j=0; j<c;j ++){
+            if(arr[i][j] == '.') cout << 'D';
+            else cout << arr[i][j];
+        }
+        cout << "\n";
+    }
+
+}
