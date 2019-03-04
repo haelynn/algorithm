@@ -1,0 +1,97 @@
+#include <iostream>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+int N, M, K, A, B, ans;
+int acTime[10], bcTime[10]; // 접수창구, 정비창구
+int arriveTime[1001]; // 처음 접수 장소
+pair<int, int> ac[10], bc[10]; // idx, time
+pair<int, int> visitor[1001];
+queue<int> aWait, bWait;
+int t, cnt;
+
+
+void Init(){
+    ans = 0;
+    t = 0;
+    cnt = 0;
+
+    scanf("%d %d %d %d %d", &N, &M, &K, &A, &B);
+    for(int i=1; i<=N; i++) scanf("%d", &acTime[i]);
+    for(int i=1; i<=M; i++) scanf("%d", &bcTime[i]);
+    for(int i=1; i<=K; i++) scanf("%d", &arriveTime[i]);
+}
+
+void Solution(){
+
+    while(true){
+
+        // 접수창구 대기
+        for(int i=1; i<=K; i++){
+            if(arriveTime[i] == t)
+                aWait.push(i);
+        }
+
+        // 접수창구
+        for(int i=1; i<=N; i++){
+            if(ac[i].first && ac[i].second == t){
+                bWait.push(ac[i].first);
+                ac[i].first = 0;
+            }
+        }
+
+        // 정비창구 끝
+        for(int i=1; i<=M; i++){
+            if(bc[i].first && bc[i].second == t){
+                if(visitor[bc[i].first].first == A && visitor[bc[i].first].second == B)
+                    ans += bc[i].first;
+
+                bc[i].first = 0;
+                cnt++;
+            }
+        }
+
+        // 접수창구 들어가기
+        for(int i=1; i<=N; i++){
+            if(aWait.empty()) break;
+            if(!ac[i].first){
+                ac[i].first = aWait.front();
+                ac[i].second = t + acTime[i];
+                aWait.pop();
+                visitor[ac[i].first].first = i;
+            }
+        }
+
+        // 정비창구 들어가기
+        for(int i=1; i<=M; i++){
+            if(bWait.empty()) break;
+            if(!bc[i].first){
+                bc[i].first = bWait.front();
+                bc[i].second = t + bcTime[i];
+                bWait.pop();
+                visitor[bc[i].first].second = i;
+            }
+        }
+
+        if(K == cnt) break;
+        t++;
+    }
+}
+
+int main(){
+
+    int T;
+    scanf("%d", &T);
+
+    for(int tCase = 1; tCase <=T; tCase++){
+
+        Init();
+        Solution();
+
+        // output
+        if(!ans) ans = -1;
+        printf("#%d %d\n", tCase, ans);
+    }
+}
