@@ -1,0 +1,30 @@
+#include <iostream>
+
+using namespace std;
+
+int student[1001];
+
+int main(){
+
+    int c, n, sum, cnt;
+    double avg;
+    scanf("%d", &c);
+
+    while(c--){
+        scanf("%d", &n);
+        sum = 0;
+        cnt = 0;
+        avg = 0.0;
+        for(int i=0; i<n; i++){
+            scanf("%d", &student[i]);
+            sum += student[i];
+        }
+
+        avg = (double)sum / n;
+        for(int i=0; i<n; i++){
+            if(avg < student[i]) cnt++;
+        }
+
+        printf("%.3f%%\n", (double)cnt*100/n);
+    }
+}
