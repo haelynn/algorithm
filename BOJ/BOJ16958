@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct City{
+    int y;
+    int x;
+    int s;
+};
+
+int N, T, M;
+vector<City> city;
+
+
+int main(){
+
+    city.push_back({0, 0, 0});
+    scanf("%d %d", &N, &T);
+    for(int i=1; i<=N; i++){
+        int s, y, x;
+        scanf("%d %d %d", &s, &x, &y);
+
+        city.push_back({y, x, s});
+    }
+
+    scanf("%d", &M);
+    while(M--){
+        int from, to;
+        scanf("%d %d", &from, &to);
+
+        int dist = abs(city[from].y - city[to].y) + abs(city[from].x - city[to].x);
+        int d1 = 0x7fffffff;
+        int d2 = 0x7fffffff;
+
+        for(int i=1; i<=N; i++){
+            if(city[i].s){
+                int tmp = abs(city[from].y - city[i].y) + abs(city[from].x - city[i].x);
+                d1 = min(tmp, d1);
+                tmp = abs(city[to].y - city[i].y) + abs(city[to].x - city[i].x);
+                d2 = min(tmp, d2);
+            }
+        }
+
+        dist = min(dist, T + d1 + d2);
+        printf("%d\n", dist);
+    }
+}
