@@ -1,0 +1,81 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+struct Point{
+    int y;
+    int x;
+    int t;
+};
+
+bool arr[10][8][8] = {0, }; // t, y, x
+bool visited[10][8][8] = {0, };
+int dy[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
+int dx[9] = {0, -1, 0, 1, -1, 1, -1, 0, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < 8 && x >= 0 && x < 8;
+}
+
+bool BFS(){
+
+    queue<Point> q;
+    q.push({7, 0, 0});
+    visited[0][7][0] = true;
+
+    while(!q.empty()){
+        int fy = q.front().y;
+        int fx = q.front().x;
+        int ft = q.front().t;
+        q.pop();
+
+        for(int i=0; i<9; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(ny == 0){
+                return true;
+            }
+
+            if(InRange(ny, nx) && !visited[ft+1][ny][nx] && !arr[ft+1][ny][nx] && !arr[ft][ny][nx]){
+                q.push({ny, nx, ft+1});
+                visited[ft+1][ny][nx] = true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    for(int i=0; i<8; i++){
+        for(int j=0; j<8; j++){
+            char tmp;
+            cin >> tmp;
+
+            if(tmp == '#') arr[0][i][j] = true;
+        }
+    }
+
+    for(int y=1; y<8; y++){
+        for(int x=0; x<8; x++){
+            for(int t=0; t<8; t++){
+                if(arr[t][y-1][x])
+                    arr[t+1][y][x] = true;
+            }
+        }
+    }
+
+    if(arr[0][7][0]){
+        printf("0\n");
+        return 0;
+    }
+
+    if(BFS()) printf("1\n");
+    else printf("0\n");
+}
