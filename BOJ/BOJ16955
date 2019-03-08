@@ -1,0 +1,68 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+char arr[10][10];
+vector<pair<int, int> > baduk;
+
+int dy[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+int dx[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < 10 && x >= 0 && x < 10;
+}
+
+bool DFS(int y, int x, int dir, int cnt){
+
+    if(cnt == 5) return true;
+    if(!InRange(y, x)) return false;
+    if(arr[y][x] != 'X') return false;
+
+
+    return DFS(y + dy[dir], x + dx[dir], dir, cnt+1);
+}
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    for(int i=0; i<10; i++){
+        for(int j=0; j<10; j++){
+            cin >> arr[i][j];
+
+            if(arr[i][j] == 'X') baduk.push_back({i, j});
+        }
+    }
+    sort(baduk.begin(), baduk.end());
+
+    for(int i=0; i<baduk.size(); i++){
+        for(int d=0; d<8; d++){
+            int ny = baduk[i].first + dy[d];
+            int nx = baduk[i].second + dx[d];
+
+            if(InRange(ny, nx) && arr[ny][nx] == '.'){
+                arr[ny][nx] = 'X';
+
+                for(int j=0; j<8; j++){
+                    bool flag = false;
+
+                    for(int k=0; k<baduk.size(); k++){
+                        flag = DFS(baduk[k].first, baduk[k].second, j, 0);
+                        if(flag)break;
+                    }
+
+                    if(flag){
+                        printf("1\n");
+                        return 0;
+                    }
+                }
+                arr[ny][nx] = '.';
+            }
+        }
+    }
+
+    printf("0\n");
+}
