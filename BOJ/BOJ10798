@@ -1,0 +1,36 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    vector<char> s[5];
+    int maxLen = 0;
+
+    for(int i=0; i<5; i++){
+        string str;
+        cin >> str;
+
+        int sSize = str.length();
+        maxLen = max(maxLen, sSize);
+
+        for(int j=0; j<sSize; j++){
+            s[i].push_back(str[j]);
+        }
+    }
+
+
+    for(int x=0; x<maxLen; x++){
+        for(int y=0; y<5; y++){
+            if(s[y].size() <= x) continue;
+            cout << s[y][x];
+        }
+    }
+    cout << "\n";
+}
