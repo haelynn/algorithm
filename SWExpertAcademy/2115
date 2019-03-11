@@ -1,0 +1,117 @@
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int N, M, C;
+int arr[11][11];
+vector <int> boxA, boxB;
+vector<int> checked;
+int ans, profitA, profitB;
+
+bool InRange(int x) {
+	if (x < N) return true;
+	else return false;
+}
+
+void MakeProfit(int depth, int status, vector<int> box) {
+
+	if (depth == M) {
+		int profit = 0;
+		int sum = 0;
+
+		for (int i = 0; i < M; i++) {
+			if (checked[i] == 1) {
+				sum += box[i];
+				profit += box[i] * box[i];
+			}
+		}
+
+		if (sum <= C && status == 0) profitA = max(profitA, profit);
+		if (sum <= C && status == 1) profitB = max(profitB, profit);
+		return;
+	}
+
+	checked[depth] = 1;
+	MakeProfit(depth+1, status, box);
+	checked[depth] = 0;
+	MakeProfit(depth + 1, status, box);
+}
+
+
+void Solve() {
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			boxA.clear();
+			boxB.clear();
+			if (InRange(j + M - 1)) {
+				for (int k = 0; k < M; k++) boxA.push_back(arr[i][j + k]);
+
+				checked.clear();
+				checked.resize(M + 1);
+				profitA = 0;
+				MakeProfit(0, 0, boxA);
+
+				for (int a = j + M; a < N; a++) {
+					if (!InRange(a + M - 1)) break;
+					for (int k = 0; k < M; k++) boxB.push_back(arr[i][a + k]);
+
+					checked.clear();
+					checked.resize(M + 1);
+					profitB = 0;
+					MakeProfit(0, 1, boxB);
+
+					ans = max(profitA + profitB, ans);
+					boxB.clear();
+				}
+
+				for (int a = i + 1; a < N; a++) {
+					for (int b = 0; b < N; b++) {
+						if (!InRange(b + M - 1)) break;
+						for (int k = 0; k < M; k++) boxB.push_back(arr[a][b + k]);
+
+						checked.clear();
+						checked.resize(M + 1);
+						profitB = 0;
+						MakeProfit(0, 1, boxB);
+
+						ans = max(profitA + profitB, ans);
+						boxB.clear();
+					}
+				}
+			}
+		}
+	}
+
+}
+
+int main() {
+
+	int T;
+	cin >> T;
+
+	for (int tc = 1; tc <= T; tc++) {
+
+		cin >> N >> M >> C;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				cin >> arr[i][j];
+			}
+		}
+
+		boxA.resize(M + 1);
+		boxB.resize(M + 1);
+		ans = 0;
+
+
+		Solve();
+
+		///
+		cout << "#" << tc << " " << ans << "\n";
+	}
+
+	return 0;
+}
