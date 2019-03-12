@@ -1,0 +1,57 @@
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+int f, s, g, u, d; //f 이루어진층 g스타트링크위치 s출발위치 u위로 g 아래로
+int ans = -1;
+queue<pair<int, int> > q;
+vector<int> stair;
+
+void BFS(){
+
+    stair[s]++;
+    q.push({s, 0});
+
+    while(!q.empty()){
+        int fstair = q.front().first;
+        int fcnt = q.front().second;
+        q.pop();
+
+        if(fstair == g){
+            ans = fcnt;
+            return;
+        }
+
+        if(fstair + u <= f && !stair[fstair+u]){
+            q.push({fstair+u, fcnt+1});
+            stair[fstair+u]++;
+        }
+
+        if(fstair - d >= 1 && !stair[fstair-d]){
+            q.push({fstair-d, fcnt+1});
+            stair[fstair-d]++;
+        }
+    }
+}
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> f >> s >> g >> u >> d;
+
+    if(s == g){
+        cout << "0\n";
+        return 0;
+    }
+
+    stair.assign(f+1, 0);
+    BFS();
+
+    if(ans == -1) cout << "use the stairs\n";
+    else cout << ans << "\n";
+}
