@@ -1,0 +1,56 @@
+#include <iostream>
+
+using namespace std;
+
+int n, ans;
+int arr[1001][1001]; // w:0 B:1
+int yCnt[1001], xCnt[1001];
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    int T;
+    cin >> T;
+
+    for(int tCase = 1; tCase <= T; tCase++){
+
+        ans = 0;
+        cin >> n;
+        for(int i=0; i<n; i++){
+            yCnt[i] = 0;
+            xCnt[i] = 0;
+        }
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                char tmp;
+                cin >> tmp;
+
+                if(tmp == 'W') {
+                    arr[i][j] = 0;
+                }
+                else if(tmp == 'B'){
+                    arr[i][j] = 1;
+                    yCnt[i]++;
+                    xCnt[j]++;
+                }
+            }
+        }
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(arr[i][j]){
+                    if((yCnt[i] + xCnt[j] - 1) % 2 != 0) ans++;
+                }
+                else{
+                    if((yCnt[i] + xCnt[j]) % 2 != 0) ans++;
+                }
+            }
+        }
+
+        // output
+        cout << "#" << tCase << " " << ans << "\n";
+    }
+}
