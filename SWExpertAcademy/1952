@@ -1,0 +1,40 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int day1, day30, month3, year1;
+int plan[13];
+int dp[13], price[13];
+
+int main(){
+
+    int T;
+    scanf("%d", &T);
+
+    for(int tCase = 1; tCase<=T; tCase++){
+
+        scanf("%d %d %d %d", &day1, &day30, &month3, &year1);
+        for(int i=1; i<=12; i++) {
+            scanf("%d", &plan[i]);
+            price[i] = 3000;
+            dp[i] = 0;
+        }
+
+        for(int i=1; i<=12; i++)
+            price[i] = min(day1 * plan[i], day30);
+
+        dp[0] = 0;
+        for(int i=1; i<=12; i++){
+            dp[i] = dp[i-1] + price[i];
+
+            if(i - 3 >= 0) dp[i] = min(dp[i], dp[i-3] + month3);
+        }
+
+        if(dp[12] > year1) dp[12] = year1;
+
+        // output
+        printf("#%d %d\n", tCase, dp[12]);
+    }
+
+}
