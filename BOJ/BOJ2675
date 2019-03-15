@@ -1,0 +1,23 @@
+#include <iostream>
+
+using namespace std;
+
+char str[25];
+
+int main(){
+
+    int T;
+    int r;
+    scanf("%d", &T);
+
+    while(T--){
+        scanf("%d", &r);
+        scanf("%s", &str);
+
+        for(int i=0; str[i]; i++){
+            for(int j=0; j<r; j++)
+                printf("%c", str[i]);
+        }
+        printf("\n");
+    }
+}
