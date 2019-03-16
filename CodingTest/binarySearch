@@ -1,0 +1,33 @@
+#define ll long long
+#include <iostream>
+#include <cmath>
+#include <algorithm>
+using namespace std;
+
+int main() {
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    ll N;
+    cin >> N;
+
+    ll L = 1;
+    ll R = N;
+    ll ans = 10000000000001;
+    while (L <= R) {
+        ll m = (L + R) / 2;
+
+        if (N % m == 0) {
+            ll remain = N / m;
+            ans = min(ans, abs(remain - m));
+            R = m-1;
+        }
+        else {
+            L = m+1;
+        }
+    }
+
+    cout << ans << '\n';
+
+}
