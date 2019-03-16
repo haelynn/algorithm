@@ -1,0 +1,72 @@
+#include <iostream>
+#include <stdio.h>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int visited[200001] = {0, };
+vector<int> cMove;
+
+int c, b;
+
+bool InRange(int x){
+    return x >= 0 && x <= 200000;
+}
+
+int BFS(){
+
+    visited[b]++;
+    queue<pair<int, int> > q;
+    q.push({b, 0});
+
+    while(!q.empty()){
+        int fx = q.front().first;
+        int ft = q.front().second;
+        q.pop();
+
+        if(ft >= cMove.size()) return -1;
+        if(fx == cMove[ft]){
+            return ft;
+        }
+
+        if(InRange(fx-1) && !visited[fx-1]){
+            q.push({fx-1, ft+1});
+            visited[fx-1]++;
+        }
+        if(InRange(fx+1) && !visited[fx+1]){
+            q.push({fx+1, ft+1});
+            visited[fx+1]++;
+        }
+        if(InRange(fx*2) && !visited[fx*2]){
+            q.push({fx*2, ft+1});
+            visited[fx+2]++;
+        }
+    }
+
+    return -1;
+}
+
+int main(void) {
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> c >> b;
+
+    cMove.push_back(c);
+    int mv = 1;
+    if(InRange(c+mv)){
+        c += mv;
+        cMove.push_back(c);
+    }
+    while(true){
+        c += ++mv;
+        if(c > 200000) break;
+        cMove.push_back(c);
+    }
+
+
+    cout << BFS() << "\n";
+}
