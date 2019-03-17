@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int t, m, n, cnt;
+vector<int> q;
+
+int InRange(int x){
+    if(x < 0) return q.size()-1;
+    else return x;
+}
+
+int main(){
+
+    scanf("%d", &t);
+
+    while(t--){
+
+        scanf("%d %d", &n, &m);
+        cnt = 0;
+
+        for(int i=0; i<n; i++){
+            int tmp;
+            scanf("%d", &tmp);
+            q.push_back(tmp);
+        }
+
+        while(!q.empty()){
+
+            bool flag = false;
+            for(int i=1; i<q.size(); i++){
+                if(q[i] > q[0]){
+                    flag = true;
+                    break;
+                }
+            }
+
+            int tmp = q[0];
+            q.erase(q.begin());
+
+            if(flag){
+                q.push_back(tmp);
+            }
+            else if(!flag){
+                cnt++;
+                if(m == 0){
+                    printf("%d\n", cnt);
+                    break;
+                }
+            }
+
+            m = InRange(m-1);
+        }
+
+        while(!q.empty()) q.erase(q.begin());
+    }
+}
