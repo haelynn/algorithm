@@ -1,0 +1,88 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int n, k;
+int status[10][10];
+int player[3][21]; // 0 지우 1 경희 2 민호
+int winCnt[3];
+int idx[3];
+
+int main(){
+
+    scanf("%d %d", &n, &k);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            scanf("%d", &status[i][j]);
+        }
+    }
+
+    for(int i=0; i<20; i++) scanf("%d", &player[1][i]);
+    for(int i=0; i<20; i++) {
+        scanf("%d", &player[2][i]);
+        player[2][i]--;
+        player[1][i]--;
+        player[0][i] = i;
+    }
+
+    bool flag = false;
+    int next;
+    pair<int, int> player1; // 지우
+    pair<int, int> player2; // 경희
+    int winner = -1;
+    int loser = -1;
+    do{
+
+        winCnt[0] = winCnt[1] = winCnt[2] = 0;
+        idx[0] = idx[1] = idx[2] = 0;
+        next = 2;
+
+        player1 = {0, player[0][0]}; // 지우
+        player2 = {1, player[1][0]}; // 경희
+
+        while(true){
+
+            if(status[player1.second][player2.second] == 2){ // player1승
+                winner = player1.first;
+                loser = player2.first;
+            }
+            else if(status[player1.second][player2.second] == 1){ // player2승
+                winner = player2.first;
+                loser = player1.first;
+            }
+            else if(status[player1.second][player2.second] == 0){// player2승
+                winner = player2.first;
+                loser = player1.first;
+            }
+
+            winCnt[winner]++;
+            if(winCnt[0] >= k && winCnt[1] < k && winCnt[2] < k){
+                flag = true;
+                break;
+            }
+            else if(winCnt[1] >= k || winCnt[2] >= k) break;
+
+            idx[player1.first]++;
+            idx[player2.first]++;
+
+            if(idx[0] >= n) break;
+
+            player2 = {next, player[next][idx[next]]};
+            player1 = {winner, player[winner][idx[winner]]};
+
+            if(player2.first < player1.first){
+                pair<int, int> tmp = player1;
+                player1 = player2;
+                player2 = tmp;
+            }
+            next = loser;
+        }
+
+        if(flag) break;
+    }while(next_permutation(player[0], player[0]+n));
+
+
+    if(flag) printf("1\n");
+    else printf("0\n");
+}
