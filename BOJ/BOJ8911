@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string.h>
+#include <algorithm>
+
+using namespace std;
+
+int dy[4] = {-1, 0, 1, 0}; // 위 오른쪽 아래 왼쪽
+int dx[4] = {0, 1, 0, -1};
+int maxX, minX, maxY, minY;
+int y, x, dir;
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    int T;
+    cin >> T;
+
+    string str;
+
+    while(T--){
+
+        cin >> str;
+        maxX = minX = maxY = minY = y = x = dir = 0;
+
+        for(int i=0; i<str.length(); i++){
+            char cur = str[i];
+
+            if(cur == 'F'){
+                y += dy[dir];
+                x += dx[dir];
+            }
+            if(cur == 'B'){
+                y += dy[(dir+2)%4];
+                x += dx[(dir+2)%4];
+            }
+            else if(cur == 'L'){
+                if(dir == 0) dir = 3;
+                else dir -= 1;
+            }
+            else if(cur == 'R'){
+                dir = (dir+1)%4;
+            }
+
+            minY = min(minY, y);
+            minX = min(minX, x);
+            maxY = max(maxY, y);
+            maxX = max(maxX, x);
+        }
+
+        cout << (maxX - minX) * (maxY - minY) << "\n";
+    }
+
+}
