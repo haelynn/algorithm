@@ -1,0 +1,71 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int n, m, k, hCnt, tmp, ny, nx;
+int ans, cnt;
+int arr[21][21];
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+int main(){
+
+    int T;
+    scanf("%d", &T);
+
+    for(int tCase = 1; tCase <= T; tCase++){
+
+        ans = 1;
+        hCnt = 0;
+
+        scanf("%d %d", &n, &m);
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                scanf("%d", &arr[i][j]);
+
+                if(arr[i][j]) hCnt++;
+            }
+        }
+
+        for(int i=0; i<n; i++){ // 중심점 y
+            for(int j=0; j<n; j++){ // 중심점 x
+
+                for(int s=2; s<=30; s++){ // 마름모크기
+                    cnt = 0;
+                    k = s * s + (s-1) * (s-1);
+                    if(hCnt * m < k) break;
+
+                    tmp = 0;
+                    for(int a=i-s+1; a<=i; a++){
+                        for(int b=tmp; b<=tmp*-1; b++){
+                            ny = a;
+                            nx = j + b;
+
+                            if(InRange(ny, nx) && arr[ny][nx]) cnt++;
+                        }
+                        tmp--;
+                    }
+
+                    tmp += 2;
+                    for(int a=i+1; a<= i+s-1; a++){
+                        for(int b=tmp; b<=tmp*-1; b++){
+                            ny = a;
+                            nx = j + b;
+
+                            if(InRange(ny, nx) && arr[ny][nx]) cnt++;
+                        }
+                        tmp++;
+                    }
+
+                    if(cnt * m - k >= 0) ans = max(ans, cnt);
+                }
+            }
+        }
+
+         // output
+         printf("#%d %d\n", tCase, ans);
+    }
+}
