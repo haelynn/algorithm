@@ -1,0 +1,88 @@
+#include <iostream>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+char tmp;
+int r, c, jy, jx;
+int fy, fx, ft, ny, nx;
+int arr[1001][1001];
+int visited[1001][1001];
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+queue<pair<int, int> > q;
+
+bool InRange(int y, int x){
+    return y >= 0 && y < r && x >= 0 && x < c;
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> r >> c;
+    for(int i=0; i<r; i++){
+        for(int j=0; j<c; j++){
+            cin >> tmp;
+
+            arr[i][j] = 0;
+            visited[i][j] = -1;
+
+            if(tmp == '#') arr[i][j] = -1;
+            else if(tmp == 'F') {
+                arr[i][j] = 1;
+                q.push({i, j});
+            }
+            else if(tmp == 'J') {
+                jy = i;
+                jx = j;
+            }
+        }
+    }
+
+    // moveFire
+    while(!q.empty()){
+        fy = q.front().first;
+        fx = q.front().second;
+        q.pop();
+
+        for(int i=0; i<4; i++){
+            ny = fy + dy[i];
+            nx = fx + dx[i];
+
+            if(InRange(ny, nx) && arr[ny][nx] == 0){
+                arr[ny][nx] = arr[fy][fx]+1;
+                q.push({ny, nx});
+            }
+        }
+    }
+
+    q.push({jy, jx});
+    visited[jy][jx] = 0;
+    while(!q.empty()){
+        fy = q.front().first;
+        fx = q.front().second;
+        ft = visited[fy][fx];
+        q.pop();
+
+        for(int i=0; i<4; i++){
+            ny = fy + dy[i];
+            nx = fx + dx[i];
+
+            if(!InRange(ny, nx)){
+                cout << visited[fy][fx] + 1 << "\n";
+                return 0;
+            }
+            if(arr[ny][nx] == -1 || visited[ny][nx] != -1) continue;
+
+            if(arr[ny][nx] == 0 || (ft+1 < arr[ny][nx]-1)){
+                q.push({ny, nx});
+                visited[ny][nx] = ft + 1;
+            }
+        }
+    }
+
+    cout << "IMPOSSIBLE\n";
+
+}
