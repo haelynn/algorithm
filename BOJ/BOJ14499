@@ -1,0 +1,68 @@
+#include <iostream>
+
+using namespace std;
+
+int n, m, fy, fx, k;
+int tmp, ny, nx, kInput;
+int dice[7] = {0, };
+int diceSet[7] = {0, 6, 5, 4, 3, 2, 1};
+int dTop, dFront, dRight;
+int arr[21][21];
+int dy[5] = {0, 0, 0, -1, 1};
+int dx[5] = {0, 1, -1, 0, 0};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < m;
+}
+
+int main(){
+
+    scanf("%d %d %d %d %d", &n, &m, &fy, &fx, &k);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++)
+            scanf("%d", &arr[i][j]);
+    }
+
+    dTop = 1;
+    dFront = 5;
+    dRight = 3;
+
+    while(k--){
+        scanf("%d", &kInput);
+
+        ny = fy + dy[kInput];
+        nx = fx + dx[kInput];
+        if(!InRange(ny, nx)) continue;
+
+        // 주사위 회전
+        tmp = dTop;
+        if(kInput == 1){ // 오
+            dTop = diceSet[dRight];
+            dRight = tmp;
+        }
+        else if(kInput == 2){ // 왼
+            dTop = dRight;
+            dRight = diceSet[tmp];
+        }
+        else if(kInput == 3){ // 뒤
+            dTop = dFront;
+            dFront = diceSet[tmp];
+        }
+        else if(kInput == 4){ // 앞
+            dTop = diceSet[dFront];
+            dFront = tmp;
+        }
+
+        // bottom 값 복사
+        if(!arr[ny][nx]) arr[ny][nx] = dice[diceSet[dTop]];
+        else{
+            dice[diceSet[dTop]] = arr[ny][nx];
+            arr[ny][nx] = 0;
+        }
+        // 출력
+        ///////
+        printf("%d\n", dice[dTop]);
+        fy = ny;
+        fx = nx;
+    }
+}
