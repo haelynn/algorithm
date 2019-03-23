@@ -1,0 +1,35 @@
+#include <iostream>
+
+using namespace std;
+
+int arr[1000001];
+int tmp[1000001];
+
+void Sort(int l, int r){
+    if(l == r) return;
+    int mid = (l + r)/2;
+    int i=l, j = mid+1, k=l;
+
+    Sort(l, mid);
+    Sort(mid+1, r);
+
+    while(i<=mid && j<=r){
+        if(arr[i] < arr[j]) tmp[k++] = arr[i++];
+        else tmp[k++] = arr[j++];
+    }
+
+    while(i<=mid) tmp[k++] = arr[i++];
+    while(j<=r) tmp[k++] = arr[j++];
+
+    for(i=l; i<=r; i++) arr[i] = tmp[i];
+    return;
+}
+
+int main(){
+
+    int n;
+    scanf("%d", &n);
+    for(int i=0; i<n; i++) scanf("%d", &arr[i]);
+    Sort(0, n-1);
+    for(int i=0; i<n; i++) printf("%d\n", arr[i]);
+}
