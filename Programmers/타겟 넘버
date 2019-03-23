@@ -1,0 +1,30 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int n;
+int answer;
+vector<int> nums;
+bool arr[1001] = {0, };
+
+void DFS(int idx, int sum, int target){
+
+    if(idx == n){
+        if(sum == target) answer++;
+        return;
+    }
+
+    DFS(idx+1, sum+nums[idx], target);
+    DFS(idx+1, sum-nums[idx], target);
+}
+
+int solution(vector<int> numbers, int target) {
+    answer = 0;
+    nums = numbers;
+    n = numbers.size();
+
+    DFS(0, 0, target);
+
+    return answer;
+}
