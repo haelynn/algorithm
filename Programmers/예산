@@ -1,0 +1,30 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int solution(vector<int> budgets, int M) {
+    int answer = 0;
+
+    sort(budgets.begin(), budgets.end());
+    int low = 0, high = budgets[budgets.size()-1];
+
+    while(low <= high){
+        int mid = (low + high) / 2;
+        long long sum = 0;
+
+        for(int i=0; i<budgets.size(); i++) {
+            sum += min(budgets[i], mid);
+            if(sum > M) break;
+        }
+
+        if(sum <= M){
+            answer = mid;
+            low = mid + 1;
+        }
+        else high = mid - 1;
+    }
+
+    return answer;
+}
