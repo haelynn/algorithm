@@ -1,0 +1,36 @@
+#define ll long long
+#define mod (1000000007)
+#include <iostream>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+int main(){
+
+    int T, n, sum;
+    ll front, tmp;
+    scanf("%d", &T);
+
+    while(T--){
+        priority_queue<ll, vector<ll>, greater<ll> > pq;
+        sum = 1;
+
+        scanf("%d", &n);
+        for(int i=0; i<n; i++){
+            scanf("%lld", &tmp);
+            pq.push(tmp);
+        }
+
+        while(pq.size() >= 2){
+            front = pq.top();
+            pq.pop();
+            front *= pq.top();
+            pq.pop();
+            pq.push(front);
+            sum = front % mod * sum % mod;
+        }
+        printf("%d\n", sum);
+    }
+
+}
