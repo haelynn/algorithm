@@ -1,0 +1,29 @@
+#include <iostream>
+#include <string.h>
+#include <algorithm>
+
+using namespace std;
+
+string a, b;
+int ans = 0x7fffffff;
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> a >> b;
+
+    int aLen = a.length();
+    int bLen = b.length();
+    int cnt;
+    for(int i=0; i<=bLen - aLen; i++){
+        cnt = 0;
+        for(int j=0; j<aLen; j++){
+            if(a[j] != b[j+i]) cnt++;
+        }
+
+        ans = min(ans, cnt);
+    }
+
+    printf("%d\n", ans);
+}
