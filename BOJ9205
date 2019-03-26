@@ -1,0 +1,54 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int n;
+vector<pair<int, int> > dist;
+int visited[105];
+bool flag;
+
+void DFS(int idx){
+
+    if(flag) return;
+    if(idx == n+1){
+        flag = true;
+        return;
+    }
+
+    for(int i=1; i<n+2; i++){
+        if(!visited[i]){
+            int d = abs(dist[idx].first - dist[i].first) + abs(dist[idx].second - dist[i].second);
+            if(d <= 1000){
+                visited[i] = 1;
+                DFS(i);
+            }
+        }
+    }
+}
+
+int main(){
+
+    int T;
+    scanf("%d", &T);
+
+    while(T--){
+        scanf("%d", &n);
+        flag = false;
+        dist.clear();
+        for(int i=0; i<n+2; i++) visited[i] = 0;
+
+        for(int i=0; i<n+2; i++){
+            int x, y;
+            scanf("%d %d", &x, &y);
+            dist.push_back({x, y});
+        }
+        DFS(0);
+
+        if(flag) printf("happy\n");
+        else printf("sad\n");
+
+    }
+
+}
