@@ -1,0 +1,61 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int n, m;
+int len = 0;
+int gap;
+int ans;
+bool B[11] = {0, };
+int visited[500001];
+vector<int> button;
+
+void DFS(int idx, int num){
+
+    if(idx == len + 2) return;
+    if(num != -1){
+        gap = abs(num - n);
+        ans = min(ans, gap+idx);
+    }
+
+
+    for(int i=0; i<button.size(); i++){
+        if(num == -1) DFS(idx+1, button[i]);
+        else DFS(idx+1, num * 10 + button[i]);
+    }
+}
+
+int main(){
+
+    scanf("%d %d", &n, &m);
+    for(int i=0; i<m; i++){
+        int b;
+        scanf("%d", &b);
+        B[b] = 1;
+    }
+
+    for(int i=0; i<10; i++){
+        if(!B[i]) button.push_back(i);
+    }
+
+    int tmp = n;
+    int idx = 1;
+    len = 1;
+    while(tmp > 10){
+        tmp /= idx;
+        idx *= 10;
+        len++;
+    }
+
+    ans = abs(n-100);
+
+    if(!ans){
+        printf("0\n");
+        return 0;
+    }
+
+    if(button.size()) DFS(0, -1);
+    printf("%d\n", ans);
+}
