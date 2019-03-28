@@ -1,0 +1,78 @@
+#define ll long long
+#define mod (1000000007)
+#include <iostream>
+
+using namespace std;
+
+ll arr[1000005];
+
+void MySwap(ll *a, ll *b){
+    ll tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void InsertQueue(int idx){
+    int i = idx;
+    while(i != 1){
+        if(arr[i] < arr[i / 2]){
+            MySwap(&arr[i], &arr[i/2]);
+            i /= 2;
+        }
+        else return;
+    }
+}
+
+ll PopQueue(int idx){
+
+    ll top = arr[1];
+    arr[1] = arr[idx];
+    arr[idx--] = 0;
+
+    int i=1;
+    int next;
+    while(i <= idx){
+        next = i;
+        if(i * 2 <= idx && arr[i*2] < arr[next]) next = i*2;
+        if(i * 2 + 1 <= idx && arr[i*2+1] < arr[next]) next = i*2+1;
+        if(i == next) break;
+
+        MySwap(&arr[i], &arr[next]);
+        i = next;
+    }
+
+    return top;
+}
+
+int main(){
+
+    int T, n, sum, idx;
+    ll tmp, front;
+
+    scanf("%d", &T);
+
+    while(T--){
+        idx = 1;
+        sum = 1;
+
+        scanf("%d", &n);
+        for(int i=0; i<n; i++){
+            scanf("%lld", &tmp);
+            arr[idx] = tmp;
+            InsertQueue(idx++);
+        }
+        idx--;
+
+        while(idx > 1){
+            front = PopQueue(idx--);
+            front *= PopQueue(idx--);
+            idx++;
+            arr[idx] = front;
+            InsertQueue(idx);
+
+            sum = front % mod * sum % mod;
+        }
+
+        printf("%d\n", sum);
+    }
+}
