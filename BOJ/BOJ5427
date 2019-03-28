@@ -1,0 +1,104 @@
+#define F "IMPOSSIBLE"
+#include <iostream>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+int w, h;
+int sy, sx, ans;
+int arr[1001][1001];
+int visited[1001][1001];
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+int fy, fx, ny, nx;
+bool flag = false;
+queue<pair<int, int> > q;
+
+bool InRange(int y, int x){
+    return y >= 0 && y < h && x >= 0 && x < w;
+}
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    int T;
+    cin >> T;
+
+    while(T--){
+
+        cin >> w >> h;
+        for(int i=0; i<h; i++){
+            for(int j=0; j<w; j++){
+                char tmp;
+                cin >> tmp;
+
+                visited[i][j] = -1;
+                arr[i][j] = 0;
+
+                if(tmp == '#') arr[i][j] = -1;
+                else if(tmp == '@'){
+                    sy = i;
+                    sx = j;
+                }
+                else if(tmp == '*'){
+                    q.push({i, j});
+                    arr[i][j] = 1;
+                }
+            }
+        }
+
+        // 불 퍼트리기
+        while(!q.empty()){
+            fy = q.front().first;
+            fx = q.front().second;
+            q.pop();
+
+            for(int i=0; i<4; i++){
+                ny = fy + dy[i];
+                nx = fx + dx[i];
+
+                if(!InRange(ny, nx)) continue;
+                if(!arr[ny][nx] || arr[fy][fx]+1 < arr[ny][nx]){
+                    arr[ny][nx] = arr[fy][fx] + 1;
+                    q.push({ny, nx});
+                }
+            }
+        }
+
+        // 상근이 이동
+        q.push({sy, sx});
+        visited[sy][sx] = 0;
+        ans = -1;
+
+        while(!q.empty()){
+            fy = q.front().first;
+            fx = q.front().second;
+            q.pop();
+
+            for(int i=0; i<4; i++){
+                ny = fy + dy[i];
+                nx = fx + dx[i];
+
+                if(!InRange(ny, nx)){
+                    ans = visited[fy][fx]+1;
+                    break;
+                }
+                if(visited[ny][nx] != -1 || arr[ny][nx] == -1) continue;
+                if(arr[ny][nx] == 0 || visited[fy][fx] + 1 < arr[ny][nx] - 1){
+                    q.push({ny, nx});
+                    visited[ny][nx] = visited[fy][fx]+1;
+                }
+            }
+            if(ans != -1) break;
+        }
+        while(!q.empty() )q.pop();
+        //
+
+        if(ans == -1) cout << F << "\n";
+        else cout << ans << "\n";
+    }
+
+}
