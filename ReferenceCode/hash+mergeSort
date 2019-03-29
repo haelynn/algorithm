@@ -1,0 +1,170 @@
+#include <iostream>
+#define mod (1000007)
+
+using namespace std;
+
+struct Node{
+    char name[10];
+    Node *next;
+
+    Node(char *s){
+        next = nullptr;
+        int i;
+        for(i=0; s[i]; i++) name[i] = s[i];
+        name[i] = 0;
+    }
+};
+Node *hashTable[mod];
+char arr[1000001][7];
+char tmp[1000001][7];
+
+int MyHash(char *s){
+
+    int key = 0;
+    for(int i=0; s[i]; i++){
+        key = (key + 17 * s[i]) % mod;
+    }
+
+    return key;
+}
+
+int CompareStr(char *s1, char *s2){
+    int i;
+    for(i=0; s1[i] && s2[i]; i++){
+        if(s1[i] != s2[i]) return s1[i] - s2[i];
+    }
+
+    if(s1[i]) return 1;
+    else if(s2[i]) return -1;
+    else return 0;
+}
+
+void InsertHash(Node *node, int key){
+
+    if(hashTable[key] == nullptr){
+        hashTable[key] = node;
+    }
+    else{
+        node->next = hashTable[key];
+        hashTable[key] = node;
+    }
+}
+
+void DeleteHash(char *name, int key){
+
+    if(hashTable[key] == nullptr) return;
+
+    Node *delNode;
+    if(!CompareStr(hashTable[key]->name, name)){
+        delNode = hashTable[key];
+        hashTable[key] = hashTable[key] ->next;
+
+        delete(delNode);
+        return;
+    }
+    else{
+        Node *node = hashTable[key];
+        Node *next = hashTable[key]->next;
+
+        while(next){
+            if(!CompareStr(next->name, name)){
+                node->next = next->next;
+                delNode = next;
+                delete(delNode);
+                return;
+            }
+
+            node = next;
+            next = node->next;
+        }
+    }
+}
+
+int GetList(){
+
+    int idx = 0;
+    for(int i=0; i<mod; i++){
+        if(hashTable[i] == nullptr) continue;
+
+        Node *node = hashTable[i];
+        while(node){
+            int j;
+            for(j=0; node->name[j]; j++){
+                arr[idx][j] = node->name[j];
+            }
+            arr[idx][j] = 0;
+            idx++;
+            node = node->next;
+        }
+    }
+
+    return idx;
+}
+
+void MyCopy(int a, int b){
+    int i;
+    for(i=0; arr[b][i]; i++)
+        tmp[a][i] = arr[b][i];
+
+    tmp[a][i] = 0;
+}
+
+void MyCopy2(int a, int b){
+    for(int i=a; i<=b; i++){
+        int j;
+        for(j=0; tmp[i][j]; j++){
+            arr[i][j] = tmp[i][j];
+        }
+        arr[i][j] = 0;
+    }
+}
+
+void MergeSort(int l, int r){
+    if(l == r) return;
+    int mid = (l+r)/2;
+
+    MergeSort(l, mid);
+    MergeSort(mid+1, r);
+
+    int i=l, j=mid+1, k=l;
+    while(i<=mid && j<=r){
+        if(CompareStr(arr[i], arr[j]) >= 0){
+            MyCopy(k++, i++);
+        }
+        else{
+            MyCopy(k++, j++);
+        }
+    }
+
+    while(i<=mid) MyCopy(k++, i++);
+    while(j<=r) MyCopy(k++, j++);
+    MyCopy2(l, r);
+}
+
+
+int main(){
+
+    int n;
+    scanf("%d", &n);
+    while(n--){
+
+        char name[10];
+        char state[10];
+
+        scanf("%s %s", name, state);
+
+        int key = MyHash(name);
+
+        if(state[0] == 'e'){
+            Node *node = new Node(name);
+            InsertHash(node, key);
+        }
+        else if(state[0] == 'l') DeleteHash(name, key);
+    }
+
+    int idx = GetList();
+
+    MergeSort(0, idx-1);
+    for(int i=0; i<idx; i++) printf("%s\n", arr[i]);
+
+}
