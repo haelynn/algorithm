@@ -1,0 +1,124 @@
+// 16:20 ~
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+struct Fish{
+    int y;
+    int x;
+    int s;
+    int dist;
+
+    bool operator < (const Fish &a)const{
+        if(y != a.y) return y < a.y;
+        else return x < a.x;
+    }
+};
+struct Node{
+    int y;
+    int x;
+    int idx;
+};
+
+int arr[21][21];
+int visited[21][21] = {0, };
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+Fish shark;
+vector<Fish> fish;
+vector<Node> list;
+int n;
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+int main(){
+
+    int fishCnt = 0;
+
+    scanf("%d", &n);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            scanf("%d", &arr[i][j]);
+
+            if(arr[i][j] == 9){
+                shark = {i, j, 2, 0};
+                arr[i][j] = 0;
+            }
+            else if(arr[i][j] == 1) fishCnt++;
+        }
+    }
+
+    if(!fishCnt){
+        printf("0\n");
+        return 0;
+    }
+
+
+    int vFlag = 1;
+    fishCnt = 0;
+
+    while(true){
+        bool flag = false;
+        queue<Node> q;
+        q.push({shark.y, shark.x, 1});
+        visited[shark.y][shark.x] = vFlag;
+
+        while(!q.empty()){
+            list.clear();
+            fish.clear();
+            list.push_back(q.front());
+            q.pop();
+
+            while(!q.empty() && q.front().idx == list[0].idx){
+                list.push_back(q.front());
+                q.pop();
+            }
+
+            for(int i=0; i<list.size(); i++){
+                int fy = list[i].y;
+                int fx = list[i].x;
+
+                for(int j=0; j<4; j++){
+                    int ny = fy + dy[j];
+                    int nx = fx + dx[j];
+
+                    if(!InRange(ny, nx) || visited[ny][nx] == vFlag) continue;
+                    if(arr[ny][nx] > 0 && arr[ny][nx] < shark.s) fish.push_back({ny, nx, arr[ny][nx], list[i].idx});
+                    else if(!arr[ny][nx] || arr[ny][nx] == shark.s){
+                        visited[ny][nx] = vFlag;
+                        q.push({ny, nx, list[i].idx + 1});
+                    }
+                }
+            }
+
+            if(fish.size()){
+                sort(fish.begin(), fish.end());
+
+                flag = true;
+                fishCnt++;
+                arr[fish[0].y][fish[0].x] = 0;
+
+                sort(fish.begin(), fish.end());
+                shark.y = fish[0].y;
+                shark.x = fish[0].x;
+                shark.dist += fish[0].dist;
+
+                if(shark.s == fishCnt) {
+                    shark.s++;
+                    fishCnt = 0;
+                }
+                break;
+            }
+        }
+
+        if(!flag) break;
+        vFlag++;
+    }
+
+    printf("%d\n", shark.dist);
+}
