@@ -1,0 +1,38 @@
+#include <iostream>
+
+using namespace std;
+
+int T;
+int s, t, a, b;
+
+int main(){
+
+    scanf("%d", &T);
+    for(int tCase=1; tCase<=T; tCase++){
+        scanf("%d %d %d %d", &s, &t, &a, &b);
+
+        int cnt = 0;
+        while(t != s){
+            if(b == 1){
+                if((t-s) % a == 0) cnt = (t-s) / a;
+                else cnt = -1;
+                break;
+            }
+
+            cnt++;
+            if(t % b == 0){
+                if(t / b < s) t -= a;
+                else t /= b;
+            }
+            else t -= a;
+
+            if(t < s){
+                cnt = -1;
+                break;
+            }
+        }
+
+        // output
+        printf("#%d %d\n", tCase, cnt);
+    }
+}
