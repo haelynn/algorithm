@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Node{
+    int y;
+    int x;
+    int cost;
+
+    bool operator <(const Node &a) const{
+        return cost < a.cost;
+    }
+};
+
+int n;
+int arr[11][11];
+int sum[11][11];
+int visited[11][11];
+int ans = 0x7fffffff;
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+vector<Node> place;
+
+void DFS(int idx, int depth, int s){
+
+    if(idx == place.size() || s >= ans) return;
+    if(depth == 3){
+        ans = min(ans, s);
+        return;
+    }
+
+    bool flag = false;
+    int fy = place[idx].y;
+    int fx = place[idx].x;
+
+    for(int i=0; i<4; i++){
+        int ny = fy + dy[i];
+        int nx = fx + dx[i];
+
+        if(visited[ny][nx]){
+            flag = true;
+            break;
+        }
+    }
+
+    if(!flag){
+        int fy = place[idx].y;
+        int fx = place[idx].x;
+        visited[fy][fx] = 1;
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            visited[ny][nx] = 1;
+        }
+
+        DFS(idx+1, depth+1, s+place[idx].cost);
+
+        visited[fy][fx] = 0;
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            visited[ny][nx] = 0;
+        }
+    }
+
+    DFS(idx+1, depth, s);
+}
+
+int main(){
+
+    scanf("%d", &n);
+    for(int i=0;i<n; i++){
+        for(int j=0; j<n; j++){
+            scanf("%d", &arr[i][j]);
+            visited[i][j] = 0;
+        }
+    }
+
+    for(int i=1; i<n-1; i++){
+        for(int j=1; j<n-1; j++){
+            sum[i][j] = arr[i][j];
+
+            for(int d=0; d<4; d++){
+                sum[i][j] += arr[i+dy[d]][j+dx[d]];
+            }
+
+            place.push_back({i, j, sum[i][j]});
+        }
+    }
+
+    sort(place.begin(), place.end());
+    DFS(0, 0, 0);
+
+    printf("%d\n", ans);
+}
