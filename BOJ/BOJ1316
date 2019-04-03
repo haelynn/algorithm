@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    int n;
+    bool alphabet[26];
+    string str;
+    cin >> n;
+
+    int sum = 0;
+    while(n--){
+        cin >> str;
+
+        bool flag = false;
+        for(int i=0; i<26; i++) alphabet[i] = false;
+        for(int i=0; i<str.length(); i++){
+            if(alphabet[str[i] - 'a']) {
+                flag = true;
+                break;
+            }
+
+            int j=i+1;
+            for(; j<str.length(); j++){
+                if(str[j] != str[i]) break;
+            }
+            j--;
+            i = j;
+
+            alphabet[str[i]-'a'] = true;
+        }
+
+        if(!flag) sum++;
+    }
+
+    cout << sum << "\n";
+}
