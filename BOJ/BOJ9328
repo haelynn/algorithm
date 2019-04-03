@@ -1,0 +1,127 @@
+// 22:56 ~ 23:44
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+int h, w, ans, paper, kCnt;
+int visited[101][101];
+char arr[101][101];
+string str;
+bool key[26], flag;
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+vector<pair<int, int> > v;
+
+bool InRange(int y, int x){
+    return y >= 0 && y < h && x >= 0 && x < w;
+}
+
+void BFS(int y, int x){
+
+    queue<pair<int, int> > q;
+    if(arr[y][x] >= 'a' && arr[y][x] <= 'z' && !key[arr[y][x] - 'a']){
+        key[arr[y][x] - 'a'] = true;
+        arr[y][x] = '.';
+        kCnt++;
+    }
+    visited[y][x] = kCnt;
+    q.push({y, x});
+
+    while(!q.empty()){
+        int fy = q.front().first;
+        int fx = q.front().second;
+        q.pop();
+
+        for(int i=0; i<4; i++){
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(!InRange(ny, nx) || arr[ny][nx] == '*' || visited[ny][nx] == kCnt) continue;
+            if(arr[ny][nx] >= 'A' && arr[ny][nx] <= 'Z' && !key[arr[ny][nx] - 'A']) continue;
+
+            if(arr[ny][nx] == '$'){
+                ans++;
+                arr[ny][nx] = '.';
+            }
+            if(arr[ny][nx] >= 'a' && arr[ny][nx] <= 'z' && !key[arr[ny][nx] - 'a']){
+                key[arr[ny][nx] - 'a'] = true;
+                arr[ny][nx] = '.';
+                kCnt++;
+            }
+
+            visited[ny][nx] = kCnt;
+            q.push({ny, nx});
+        }
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    int T;
+    cin >> T;
+
+    while(T--){
+
+        // input and init
+        ans = 0;
+        paper = 0;
+        kCnt = 0;
+        v.clear();
+        for(int i=0; i<26; i++) key[i] = false;
+
+        cin >> h >> w;
+        for(int i=0; i<h; i++){
+            for(int j=0; j<w; j++){
+                cin >> arr[i][j];
+
+                visited[i][j] = -1;
+                if((i == 0 || i == h-1 || j == 0 || j == w-1) && arr[i][j] != '*'){
+                    v.push_back({i, j});
+                }
+
+                if(arr[i][j] == '$') paper++;
+            }
+        }
+
+        cin >> str;
+        if(str[0] != '0'){
+            kCnt = str.length();
+            for(int i=0; i<kCnt; i++) key[str[i] - 'a'] = true;
+        }
+        /////
+
+        flag = true;
+        while(flag && paper != ans){
+            flag = false;
+
+            for(int i=0; i<v.size(); i++){
+                int y = v[i].first;
+                int x = v[i].second;
+
+                if(arr[y][x] == '$'){
+                    ans++;
+                    arr[y][x] = '.';
+                }
+                if(paper == ans) break;
+
+                char tmp = arr[y][x];
+                if(tmp == '.' || (tmp >= 'a' && tmp <= 'z') || (tmp >= 'A' && tmp <= 'Z' && key[tmp - 'A'])){
+                    if(visited[y][x] == -1 || kCnt > visited[y][x]){
+                        flag = true;
+                        BFS(y, x);
+                    }
+                }
+            }
+
+        }
+
+        // output
+        cout << ans << "\n";
+    }
+}
