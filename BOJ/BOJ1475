@@ -1,0 +1,26 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+int main(){
+
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    int arr[10] = {0, };
+    string str;
+    cin >> str;
+
+    for(int i=0; i<str.length(); i++){
+        arr[str[i] - '0']++;
+    }
+
+    int cnt = 0;
+    for(int i=0; i<10; i++){
+        if(i != 6 && i != 9) cnt = max(cnt, arr[i]);
+    }
+
+    cout << max(cnt, (arr[6] + arr[9] + 1)/2) << "\n";
+}
