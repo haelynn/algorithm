@@ -1,0 +1,60 @@
+#include <iostream>
+
+using namespace std;
+
+struct Node{
+    int w;
+    int r;
+    int b;
+};
+
+int n, m;
+int ans = 0x7fffffff;
+char arr[51][51];
+Node flag[51];
+
+void DFS(int idx, char pre, int sum){
+
+    if(idx == n-1) {
+        if(pre != 'W')
+            ans = min(sum, ans);
+        return;
+    }
+
+    if(pre == 'W'){
+        DFS(idx+1, 'W', sum + flag[idx].r + flag[idx].b);
+        DFS(idx+1, 'B', sum + flag[idx].w + flag[idx].r);
+    }
+    else if(pre == 'B'){
+        DFS(idx+1, 'B', sum + flag[idx].r + flag[idx].w);
+        DFS(idx+1, 'R', sum + flag[idx].w + flag[idx].b);
+    }
+    else{
+        DFS(idx+1, 'R', sum + flag[idx].w + flag[idx].b);
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> n >> m;
+    for(int i=0; i<n; i++){
+        flag[i] = {0, 0, 0};
+
+        for(int j=0; j<m; j++){
+            cin >> arr[i][j];
+
+            if(arr[i][j] == 'W') flag[i].w++;
+            else if(arr[i][j] == 'R') flag[i].r++;
+            else if(arr[i][j] == 'B') flag[i].b++;
+        }
+    }
+
+    DFS(1, 'W', 0);
+
+    ans += flag[0].b + flag[0].r;
+    ans += flag[n-1].w + flag[n-1].b;
+
+    cout << ans << "\n";
+}
