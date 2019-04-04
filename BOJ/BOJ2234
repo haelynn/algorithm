@@ -1,0 +1,110 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// 1 서쪽 2 북쪽 4 동쪽 8 남쪽
+
+int n, m;
+int arr[51][51];
+int visited[51][51];
+int idx = 0;
+int dy[4] = {0, -1, 0, 1};
+int dx[4] = {-1, 0, 1, 0};
+vector<pair<int, int> > list; // size, idx
+vector<pair<int, int> > room[2500];
+
+bool compare(const pair<int, int> a, const pair<int, int> b){
+    return a.first > b.first;
+}
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < m;
+}
+
+void BFS(int y, int x){
+
+    queue<pair<int, int> > q;
+    visited[y][x] = idx;
+    q.push({y, x});
+
+    while(!q.empty()){
+        int fy = q.front().first;
+        int fx = q.front().second;
+        room[idx].push_back({fy, fx});
+        q.pop();
+
+        int flag = 1;
+        for(int i=0; i<4; i++){
+            if(flag & arr[fy][fx]) {
+                flag = 1 << i+1;
+                continue;
+            }
+
+            int ny = fy + dy[i];
+            int nx = fx + dx[i];
+
+            if(InRange(ny, nx) && visited[ny][nx] == -1){
+                visited[ny][nx] = idx;
+                q.push({ny, nx});
+            }
+
+            flag = 1 << i+1;
+        }
+    }
+}
+
+int Solution(){
+
+    int maxN = list[0].first + list[1].first;
+    int ans = 0;
+    for(int i=0; i<list.size(); i++){
+        if(ans == maxN) break;
+        int tmp = list[i].second;
+        int cnt = list[i].first;
+
+        for(int j=0; j<list[i].first; j++){
+            int fy = room[tmp][j].first;
+            int fx = room[tmp][j].second;
+
+            for(int d=0; d<4; d++){
+                int ny = fy + dy[d];
+                int nx = fx + dx[d];
+
+                if(InRange(ny, nx) && visited[ny][nx] != tmp){
+                    int nSize = room[visited[ny][nx]].size();
+                    ans = max(ans, cnt+nSize);
+                }
+            }
+        }
+    }
+
+     return ans;
+}
+
+int main(){
+
+    scanf("%d %d", &m, &n);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            scanf("%d", &arr[i][j]);
+            visited[i][j] = -1;
+        }
+    }
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            if(visited[i][j] == -1){
+                BFS(i, j);
+                list.push_back({room[idx].size(), idx});
+                idx++;
+            }
+        }
+    }
+    sort(list.begin(), list.end(), compare);
+    int ans = Solution();
+
+    printf("%d\n%d\n%d\n", idx, list[0].first, ans);
+}
