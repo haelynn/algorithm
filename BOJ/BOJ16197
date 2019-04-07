@@ -1,0 +1,79 @@
+// 21:02 ~
+
+#include <iostream>
+
+using namespace std;
+
+int n, m, ans = 11;
+char arr[21][21];
+pair<int, int> coin[2];
+int dy[4] = {-1, 1, 0, 0}; //상하좌우
+int dx[4] = {0, 0, -1, 1};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < m;
+}
+
+void DFS(int idx){
+    if(idx == 10) return;
+
+    for(int i=0; i<4; i++){
+        bool flag[2] = {0, 0};
+        bool wall[2] = {0, 0};
+
+        for(int j=0; j<2; j++){
+            int y = coin[j].first + dy[i];
+            int x = coin[j].second + dx[i];
+
+            if(!InRange(y, x)) flag[j] = true;
+            else if(arr[y][x] == '#') wall[j] = true;
+        }
+
+        if(!flag[0] && !flag[1]){
+            for(int j=0; j<2; j++){
+                if(!wall[j]){
+                    coin[j].first += dy[i];
+                    coin[j].second += dx[i];
+                }
+            }
+
+            DFS(idx+1);
+
+            for(int j=0; j<2; j++){
+                if(!wall[j]){
+                    coin[j].first -= dy[i];
+                    coin[j].second -= dx[i];
+                }
+            }
+        }
+        else if(flag[0] && flag[1]);
+        else{
+            ans = min(ans, idx+1);
+            return;
+        }
+
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> n >> m;
+    int tmp = 0;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            cin >> arr[i][j];
+
+            if(arr[i][j] == 'o'){
+                arr[i][j] = '.';
+                coin[tmp++] = {i, j};
+            }
+        }
+    }
+
+    DFS(0);
+
+    if(ans == 11) ans = -1;
+    printf("%d\n", ans);
+}
