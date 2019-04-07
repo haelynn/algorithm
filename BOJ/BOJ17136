@@ -1,0 +1,119 @@
+// https://colynn.tistory.com/11
+
+// 15:25 ~ 17:08
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int arr[11][11];
+int ans = 26;
+vector<pair<int, int> > paper;
+int pCnt = 0;
+int cnt[5];
+
+bool InRange(int y, int x){
+    return y >= 0 && x < 10 && x >= 0 && x < 10;
+}
+
+int FindMax(int y, int x){
+
+    int ret = 1;
+    for(; ret<=5; ret++){
+
+        int cnt = 0;
+        int pivot = ret * ret;
+
+        int fy = y;
+        for(int i=0; i<ret; i++){
+            int fx = x;
+            for(int j=0; j<ret; j++){
+                if(!InRange(fy, fx)) break;
+                if(arr[fy][fx++]) cnt++;
+                else break;
+            }
+            fy++;
+        }
+
+        if(cnt != pivot) {
+            ret--;
+            break;
+        }
+    }
+
+    if(ret == 6) ret--;
+    return ret;
+}
+
+void DFS(int idx, int empty, int use){
+
+    if(!empty){
+        ans = min(use, ans);
+        return;
+    }
+    if(idx == pCnt || use >= ans) return;
+
+    if(!arr[paper[idx].first][paper[idx].second]){
+        DFS(idx+1, empty, use);
+        return;
+    }
+
+    int y = paper[idx].first;
+    int x = paper[idx].second;
+
+    int minSize = FindMax(y, x);
+
+    for(int k=0; k<minSize; k++){
+        if(!cnt[k]) continue;
+
+        y = paper[idx].first;
+        for(int i=0; i<=k; i++){
+            x = paper[idx].second;
+            for(int j=0; j<=k; j++){
+                arr[y][x++] = 0;
+            }
+            y++;
+        }
+
+        cnt[k]--;
+        DFS(idx+1, empty - ((k+1) * (k+1)), use+1);
+
+        cnt[k]++;
+    }
+
+    y = paper[idx].first;
+    for(int i=0; i<minSize; i++){
+        x = paper[idx].second;
+        for(int j=0; j<minSize; j++){
+            arr[y][x++] = 1;
+        }
+        y++;
+    }
+}
+
+int main(){
+
+    for(int i=0; i<10; i++){
+        if(i < 5) cnt[i] = 5;
+
+        for(int j=0; j<10; j++){
+            scanf("%d", &arr[i][j]);
+
+            if(arr[i][j]){
+                paper.push_back({i, j});
+                pCnt++;
+            }
+        }
+    }
+    if(!pCnt){
+        printf("0\n");
+        return 0;
+    }
+
+    DFS(0, pCnt, 0);
+
+    if(ans == 26) ans = -1;
+    printf("%d\n", ans);
+}
