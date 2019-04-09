@@ -1,0 +1,118 @@
+// 18:57 ~
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+struct Node{
+    int y;
+    int x;
+    int power;
+    int start;
+
+    bool operator<(const Node &a)const{
+        return start > a.start;
+    }
+};
+
+bool Compare(const Node &a, const Node &b){
+    return a.power > b.power;
+}
+
+int arr[1001][1001];
+int n, m, k, ans;
+int minX, minY, maxY, maxX;
+int dy[4] = {0, 0, -1, 1};
+int dx[4] = {-1, 1, 0, 0};
+
+priority_queue<Node> cell[2]; // 0 비활성화, 1 활성화
+
+void Solution(){
+
+    for(int t=1; t<=k; t++){
+        if(cell[0].empty() && cell[1].empty()) break;
+        vector<Node> newCell;
+
+        // 비활성화 - > 활성화 전환 및 번식 준비
+        while(!cell[0].empty() && cell[0].top().start == t){
+            Node node = cell[0].top();
+            cell[0].pop();
+
+            newCell.push_back(node);
+            node.start = t + node.power;
+            cell[1].push(node);
+        }
+
+        // 죽은 셀 처리
+        while(!cell[1].empty() && cell[1].top().start == t){
+            cell[1].pop();
+        }
+
+        if(t == k) break;
+        sort(newCell.begin(), newCell.end(), Compare);
+        for(int i=0; i<newCell.size(); i++){
+
+            for(int d=0; d<4; d++){
+                int ny = newCell[i].y + dy[d];
+                int nx = newCell[i].x + dx[d];
+
+                if(!arr[ny][nx]){
+                    minX = min(minX, nx);
+                    maxX = max(maxX, nx);
+                    minY = min(minY, ny);
+                    maxY = max(maxY, ny);
+                    arr[ny][nx] = newCell[i].power;
+                    cell[0].push({ny, nx, newCell[i].power, t + newCell[i].power + 1});
+                }
+            }
+        }
+    }
+
+    ans = cell[0].size() + cell[1].size();
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    int T;
+    cin >> T;
+
+    for(int tCase=1; tCase<=T; tCase++){
+
+        minX = minY = 1001;
+        maxX = maxY = 0;
+        while(!cell[0].empty()) cell[0].pop();
+        while(!cell[1].empty()) cell[1].pop();
+
+        cin >> n >> m >> k;
+        ans = 0;
+        for(int i=475; i<475+n; i++){
+            for(int j=475; j<475+m; j++){
+                cin >> arr[i][j];
+
+                if(arr[i][j]){
+                    minX = min(minX, j);
+                    maxX = max(maxX, j);
+                    minY = min(minY, i);
+                    maxY = max(maxY, i);
+                    cell[0].push({i, j, arr[i][j], arr[i][j]});
+                }
+            }
+        }
+
+        Solution();
+        // output
+        cout << "#" << tCase << " " << ans << "\n";
+
+        if(tCase == T) break;
+        for(int i=minY; i<=maxY; i++){
+            for(int j=minX; j<=maxX; j++)
+                arr[i][j] = 0;
+        }
+    }
+
+}
