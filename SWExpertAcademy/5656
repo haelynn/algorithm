@@ -1,0 +1,133 @@
+// 18:11 ~
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <queue>
+ 
+using namespace std;
+ 
+struct Node{
+    int y;
+    int x;
+    int power;
+};
+ 
+int n, w, h, ans;
+int arr[16][16];
+int tmp[16][16];
+int list[5];
+int dy[4] = {0, 0, -1, 1};
+int dx[4] = {-1, 1, 0, 0};
+ 
+bool InRange(int y, int x){
+    return y >= 0 && y < h && x >= 0 && x < w;
+}
+ 
+void DownBlock(){
+ 
+    for(int x=0; x<w; x++){
+        for(int y = h-2; y>=0; y--){
+            if(!tmp[y][x]) continue;
+            if(tmp[y+1][x]) continue;
+ 
+            int t = y + 1;
+            while(InRange(t, x) && !tmp[t][x]) t++;
+            t--;
+ 
+            tmp[t][x] = tmp[y][x];
+            tmp[y][x] = 0;
+        }
+    }
+}
+ 
+void Solution(){
+ 
+    for(int i=0; i<h; i++){
+        for(int j=0; j<w; j++){
+            tmp[i][j] = arr[i][j];
+        }
+    }
+ 
+    for(int k=0; k<n; k++){
+        int bomb = list[k];
+        int y = 0;
+        while(InRange(y, bomb) && !tmp[y][bomb]) y++;
+ 
+        queue<Node> q;
+        if(tmp[y][bomb] > 1){
+            q.push({y, bomb, tmp[y][bomb]});
+        }
+        tmp[y][bomb] = 0;
+ 
+        bool flag = false;
+        while(!q.empty()){
+            flag = true;
+            Node node = q.front();
+            q.pop();
+ 
+            for(int d=0; d<4; d++){
+                for(int s=0; s<node.power; s++){
+                    int ny = node.y + dy[d] * s;
+                    int nx = node.x + dx[d] * s;
+ 
+                    if(!InRange(ny, nx)) break;
+                    if(tmp[ny][nx] > 1){
+                        q.push({ny, nx, tmp[ny][nx]});
+                    }
+                    tmp[ny][nx] = 0;
+                }
+            }
+        }
+ 
+        // 벽돌 내리기
+        if(flag)
+            DownBlock();
+ 
+        int cnt = 0;
+        for(int i=0; i<h; i++){
+            for(int j=0; j<w; j++){
+                if(tmp[i][j]) cnt++;
+            }
+        }
+ 
+        // 벽돌 세기
+        ans = min(cnt, ans);
+    }
+}
+ 
+void DFS(int idx){
+    if(idx == n){
+        Solution();
+        return;
+    }
+ 
+    for(int i=0; i<w; i++){
+        list[idx] = i;
+        DFS(idx + 1);
+    }
+}
+ 
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+ 
+    int T;
+    cin >> T;
+ 
+    for(int tCase=1; tCase<=T; tCase++){
+        cin >> n >> w >> h;
+        for(int i=0; i<h; i++){
+            for(int j=0; j<w; j++){
+                cin >> arr[i][j];
+ 
+                if(arr[i][j]) ans++;
+            }
+        };
+        DFS(0);
+ 
+        // output
+        cout << "#" << tCase << " " << ans << "\n";
+    }
+ 
+ 
+}
