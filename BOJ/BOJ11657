@@ -1,0 +1,47 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define INF (0x7fffffff)
+#include <iostream>
+
+using namespace std;
+
+typedef struct Edge {
+	int from;
+	int to;
+	int weight;
+}Edge;
+Edge edge[6001];
+int dist[501];
+int n, m;
+
+int main() {
+
+	scanf("%d %d", &n, &m);
+	for (int i = 0; i < m; i++) 
+		scanf("%d %d %d", &edge[i].from, &edge[i].to, &edge[i].weight);
+
+	for (int i = 1; i <= n; i++) dist[i] = INF;
+	dist[1] = 0;
+
+
+	for (int i = 1; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (dist[edge[j].from] != INF && dist[edge[j].from] + edge[j].weight < dist[edge[j].to]) {
+				dist[edge[j].to] = dist[edge[j].from] + edge[j].weight;
+			}
+		}
+	}
+
+	for (int i = 0; i < m; i++) {
+		if (dist[edge[i].from] != INF && dist[edge[i].from] + edge[i].weight < dist[edge[i].to]) {
+			printf("-1\n");
+			return 0;
+		}
+	}
+
+	for (int i = 2; i <= n; i++) {
+		if (dist[i] == INF) printf("-1\n");
+		else printf("%d\n", dist[i]);
+	}
+		
+
+}
