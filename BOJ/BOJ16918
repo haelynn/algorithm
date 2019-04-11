@@ -1,0 +1,109 @@
+/*
+ 13:00 ~
+
+ 1. 주어진 맵
+ 2. 1초는 그냥 지남
+ 3. 설치되지 않은 모든 칸에 폭탄
+ 4. 2초전에 설치된 폭탄 모두 폭발
+ 3~4 반복
+
+ 1. 채우면서 q에 삽입
+ 2. 터트리기
+
+ 1~2 반복
+ */
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int r, c, n;
+char arr[201][201][2];
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
+int flag = 0;
+queue<pair<int, int> > bomb[2];
+
+bool InRange(int y, int x){
+    return y >= 0 && y < r && x >= 0 && x < c;
+}
+
+void Solution(){
+
+    n /= 2;
+    int chk = n;
+    for(int k=0; k<n; k++){
+
+        for(int i=0; i<r; i++){
+            for(int j=0; j<c; j++){
+                if(arr[i][j][flag] == '.'){
+                    bomb[!flag].push({i, j});
+                }
+                arr[i][j][!flag] = 'O';
+            }
+        }
+
+        while(!bomb[flag].empty()){
+            int fy = bomb[flag].front().first;
+            int fx = bomb[flag].front().second;
+            bomb[flag].pop();
+
+            if(arr[fy][fx][flag] == '.') continue;
+            arr[fy][fx][!flag] = '.';
+            for(int i=0; i<4; i++){
+                int ny = fy + dy[i];
+                int nx = fx + dx[i];
+
+                if(InRange(ny, nx)){
+                    arr[ny][nx][!flag] = '.';
+                }
+            }
+        }
+
+        flag = !flag;
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> r >> c >> n;
+    for(int i=0; i<r; i++){
+        for(int j=0; j<c; j++){
+            cin >> arr[i][j][0];
+            arr[i][j][1] = arr[i][j][0];
+
+            if(arr[i][j][0] == 'O') bomb[0].push({i, j});
+        }
+    }
+
+    if(n == 1){
+         for(int i=0; i<r; i++){
+             for(int j=0; j<c; j++)
+                 cout << arr[i][j][0];
+             cout << "\n";
+         }
+         return 0;
+    }
+    else if(n % 2 == 0){
+        for(int i=0; i<r; i++){
+            for(int j=0; j<c; j++)
+                cout << "O";
+            cout << "\n";
+        }
+
+        return 0;
+    }
+
+    Solution();
+
+    for(int i=0; i<r; i++){
+        for(int j=0; j<c; j++){
+            cout << arr[i][j][flag];
+        }
+        cout << "\n";
+    }
+}
