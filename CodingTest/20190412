@@ -1,0 +1,64 @@
+#define Y "YES\n"
+#define N "NO\n"
+#include <iostream>
+
+using namespace std;
+
+int n;
+
+int CheckSquare(int y, int x){
+    if(y >= 0 && y < 3){
+        if(x < 3) return 0;
+        else if(x >= 3 && x < 6) return 1;
+        else return 2;
+    }
+    else if(y >= 3 && y < 6){
+        if(x < 3) return 3;
+        else if(x >= 3 && x < 6) return 4;
+        else return 5;
+    }
+    else{
+        if(x < 3) return 6;
+        else if(x >= 3 && x < 6) return 7;
+        else return 8;
+    }
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    cin >> n;
+    while(n--){
+
+        bool flag = true;
+        bool seroCheck[10][10] = {0, };
+        bool squareCheck[10][10] = {0, };
+
+        for(int i=0; i<9; i++){
+            bool garoCheck[10] = {0, };
+
+            for(int j=0; j<9; j++){
+                int input;
+                cin >> input;
+
+                if(garoCheck[input]) flag = false;
+                else garoCheck[input] = true;
+
+                if(seroCheck[i][input]) flag = false;
+                else seroCheck[i][input] = true;
+
+                int tmp = CheckSquare(i, j);
+                if(squareCheck[tmp][input]) flag = false;
+                else squareCheck[tmp][input] = true;
+
+                if(!flag){
+
+                }
+            }
+        }
+
+        if(flag) cout << Y;
+        else cout << N;
+    }
+}
