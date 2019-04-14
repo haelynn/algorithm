@@ -1,0 +1,119 @@
+#include <iostream>
+#include <queue>
+#include <algorithm>
+#include <vector>
+#define INF (0x7fffffff)
+
+using namespace std;
+struct Node{
+    int y;
+    int x;
+    int t;
+};
+
+int n, m, ans = INF;
+int arr[51][51];
+int tArr[51][51];
+int use[10] = {0, };
+int visited[51][51] = {0, };
+vector<pair<int, int> > place;
+int pSize = 0;
+int vFlag = 1;
+int dy[4] = {0, 0, -1, 1};
+int dx[4] = {-1, 1, 0, 0};
+
+bool InRange(int y, int x){
+    return y >= 0 && y < n && x >= 0 && x < n;
+}
+
+int BFS(){
+    queue<Node> q;
+    for(int i=0; i<pSize; i++){
+        if(use[i]){
+            visited[place[i].first][place[i].second] = vFlag;
+            q.push({place[i].first, place[i].second, 0});
+        }
+    }
+
+    int dust = 0;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            tArr[i][j] = arr[i][j];
+
+            if(tArr[i][j] == 0) dust++;
+        }
+    }
+
+    int ret = INF;
+    while(!q.empty()){
+        vector<Node> tmp;
+        tmp.push_back(q.front());
+
+        if(!dust){
+            ret = tmp[0].t;
+            break;
+        }
+
+        q.pop();
+
+        while(!q.empty() && q.front().t == tmp[0].t){
+            tmp.push_back(q.front());
+            q.pop();
+        }
+
+        for(int i=0; i<tmp.size(); i++){
+            for(int d=0; d<4; d++){
+                int ny = tmp[i].y + dy[d];
+                int nx = tmp[i].x + dx[d];
+
+                if(!InRange(ny, nx) || tArr[ny][nx] == 1) continue;
+                if(visited[ny][nx] != vFlag){
+                    q.push({ny, nx, tmp[i].t + 1});
+                    visited[ny][nx] = vFlag;
+                    if(tArr[ny][nx] == 0) dust--;
+                    tArr[ny][nx] = 2;
+                }
+            }
+        }
+    }
+
+    vFlag++;
+    return ret;
+}
+
+void DFS(int idx, int cnt){
+    if(idx > pSize) return;
+    if(cnt == m){
+
+        ans = min(ans, BFS());
+        return;
+    }
+
+    if(idx < pSize){
+        use[idx] = 1;
+        DFS(idx+1, cnt+1);
+        use[idx] = 0;
+    }
+
+    DFS(idx+1, cnt);
+}
+
+int main(){
+
+    cin >> n >> m;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            cin >> arr[i][j];
+
+            if(arr[i][j] == 2){
+                pSize++;
+                place.push_back({i, j});
+            }
+        }
+    }
+
+    DFS(0, 0);
+
+    if(ans == INF) ans = -1;
+    cout << ans << "\n";
+}
