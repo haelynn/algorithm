@@ -1,0 +1,136 @@
+   #include <stdio.h>
+ 
+//#include <time.h>
+#include <iostream>
+//#include <fstream>
+using namespace std;
+int arr[510][510] = {};
+int visit[510][510] = {};
+ 
+int M, N;
+int Sx, Sy, Dx, Dy;
+int cnt = 0;
+ 
+ 
+int guns();
+int map[501][501];
+long long d[501][501] = {};
+int check[501][501] = {};
+ 
+int sX = 0, sY = 0;
+int desX = 0, desY = 0;
+ 
+int dx[4] = { -1, 0, 1, 0 };
+int dy[4] = { 0, 1, 0, -1 };
+ 
+int main(void){
+ 
+    int test;
+    int k;
+     
+    guns();
+ 
+    return 0;
+}
+ 
+bool canGo(int curX, int curY, int nextX, int nextY){
+    int f, s;
+    if (map[curX][curY] < 0 && map[nextX][nextY] < 0){
+        return false;
+    }
+ 
+    if (map[curX][curY] < 0){
+        f = map[curX][curY] * -1;
+    }
+    else{
+        f = map[curX][curY];
+    }
+    if (map[nextX][nextY] < 0){
+        s = map[nextX][nextY] * -1;
+    }
+    else{
+        s = map[nextX][nextY];
+    }
+ 
+    if (s > f){
+        return true;
+    }
+    return false;
+}
+int downHill(int x, int y)
+{
+    if (x == desX && y == desY)
+    {
+        return 1;
+    }
+    else if (d[x][y] >= 0){
+        return d[x][y];
+    }
+ 
+    if (d[x][y] == -1)
+        d[x][y] = 0;
+ 
+ 
+    for (int i = 0; i < 4; i++)
+    {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+        if (nx >= 0 && nx < N && ny >= 0 && ny < M) {
+            if (canGo(x, y, nx, ny)){
+                d[x][y] += downHill(nx, ny);
+            }
+        }
+    }
+    return d[x][y];
+}
+ 
+ 
+int guns()
+{
+//  clock_t start1 = clock();
+    //clock_t end1;
+    //std::ios::sync_with_stdio(false);
+//  freopen("input.txt", "r", stdin);
+//  fstream fout("output.txt");
+    int T;
+ 
+    cin >> T;
+    for (int t = 1; t <= T; t++){
+        cin >> N >> M;
+        cin >> sX >> sY;
+        cin >> desX >> desY;
+        if (sX == desX && sY == desY)
+            cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+         
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < M; j++)
+            {
+                d[i][j] = -1;
+                cin >> map[i][j];
+            }
+        }
+ 
+        //printD();
+        downHill(sX, sY);
+ 
+ 
+        //printD();
+        if (d[sX][sY] == 0 || d[sX][sY] == -1){
+            cout << "#" << t << " " << "Sorry, princess XD" << endl;
+        //  fout << "#" << t << " " << "Sorry, princess XD" << endl;
+ 
+        }
+ 
+        else{
+            cout << "#" << t << " " << d[sX][sY] << endl;
+            //fout << "#" << t << " " << d[sX][sY] << endl;
+        }
+    }
+    //end1 = clock();
+    //printf("[%lf]", (double)(end1 - start1) / CLOCKS_PER_SEC);
+ 
+ 
+ 
+    return 0;
+}
