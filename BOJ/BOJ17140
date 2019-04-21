@@ -1,0 +1,111 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int arr[105][105];
+int r, c, k;
+int maxX, maxY;
+
+bool Compare(const pair<int, int> &a, const pair<int, int> &b){
+    if(a.second != b.second) return a.second < b.second;
+    else return a.first < b.first;
+}
+
+void Solution(){
+
+    int num[101][101] = {0, };
+    vector<pair<int, int> > list[105]; // first num, second cnt;
+    bool flag = 0; // 가로
+    if(maxX > maxY) flag = 1;
+
+    if(!flag){ // 가로
+        for(int i=1; i<=maxY; i++){
+            for(int j=1; j<=maxX; j++){
+                if(!arr[i][j]) continue;
+                if(!num[i][arr[i][j]]) list[i].push_back({arr[i][j], 0});
+                num[i][arr[i][j]]++;
+            }
+
+            for(int j=0; j<list[i].size(); j++){
+                list[i][j].second = num[i][list[i][j].first];
+            }
+            sort(list[i].begin(), list[i].end(), Compare);
+        }
+    }
+    else{
+        for(int i=1; i<=maxX; i++){
+            for(int j=1; j<=maxY; j++){
+                if(!arr[j][i]) continue;
+                if(!num[i][arr[j][i]]) list[i].push_back({arr[j][i], 0});
+                num[i][arr[j][i]]++;
+            }
+
+            for(int j=0; j<list[i].size(); j++){
+                list[i][j].second = num[i][list[i][j].first];
+            }
+            sort(list[i].begin(), list[i].end(), Compare);
+        }
+    }
+
+    for(int i=1; i<=maxY; i++){
+        for(int j=1; j<=maxX; j++)
+            arr[i][j] = 0;
+    }
+
+    if(!flag){
+        for(int i=1; i<=maxY; i++){
+            int tmp = 1;
+            for(int j=0; j<list[i].size(); j++){
+                if(tmp > 100) break;
+                arr[i][tmp++] = list[i][j].first;
+                arr[i][tmp++] = list[i][j].second;
+            }
+            tmp--;
+            if(tmp > maxX) maxX = tmp;
+        }
+    }
+    else{
+        for(int i=1; i<=maxX; i++){
+            int tmp=1;
+            for(int j=0; j<list[i].size(); j++){
+                if(tmp > 100) break;
+                arr[tmp++][i] = list[i][j].first;
+                arr[tmp++][i] = list[i][j].second;
+            }
+            tmp--;
+            if(tmp > maxY) maxY = tmp;
+        }
+    }
+
+
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+
+    cin >> r >> c >> k;
+    for(int i=1; i<=3; i++){
+        for(int j=1; j<=3; j++){
+            cin >> arr[i][j];
+        }
+    }
+
+    if(arr[r][c] == k){
+        cout << "0\n";
+        return 0;
+    }
+
+    int t = 1;
+    maxX = maxY = 3;
+    while(t <= 100){
+        Solution();
+        if(arr[r][c] == k) break;
+        t++;
+    }
+
+    if(t <= 100) cout << t << "\n";
+    else cout << "-1\n";
+}
