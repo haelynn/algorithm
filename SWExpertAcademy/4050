@@ -1,0 +1,47 @@
+#include <iostream>
+#include <stdlib.h>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+	std::ios::sync_with_stdio(false);
+	int tc;
+	cin >> tc;
+
+	for (int t = 1; t <= tc; t++) {
+	
+		int n;
+		cin >> n;
+
+		int *arr;
+		arr = (int*)malloc(sizeof(int)*n);
+
+		int res = 0;
+
+		for (int i = 0; i < n; i++) 
+			cin >> arr[i];
+
+		sort(arr, arr + n);
+
+		int idx = n % 3;
+		if (idx) {
+			for (int i = 0; i < idx; i++)
+				res += arr[i];
+		}
+		
+		int cnt = 0;
+		for (int i = idx; i < n; i++) {
+			if (cnt == 3) cnt = 0;
+			if (cnt)
+				res += arr[i];
+
+			cnt++;
+		}
+
+		// output
+		cout << "#" << t << " " << res << "\n";
+	}
+    
+    return 0;
+}
