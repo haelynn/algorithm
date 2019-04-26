@@ -1,0 +1,60 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Node{
+    int v1, v2, cost;
+
+    bool operator<(const Node &a)const{
+        return cost < a.cost;
+    }
+};
+
+int v, e;
+vector<Node> edge;
+int parent[100001];
+
+int Find(int x){
+    if(x == parent[x]) return x;
+    else return parent[x] = Find(parent[x]);
+}
+
+void Union(int x, int y){
+    x = parent[x];
+    y = parent[y];
+    parent[x] = y;
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+
+    cin >> v >> e;
+    for(int i=0; i<e; i++){
+        int a, b, c;
+        cin >> a >> b >> c;
+        edge.push_back({a, b, c});
+    }
+    sort(edge.begin(), edge.end());
+
+    for(int i=0; i<=v; i++) parent[i] = i;
+
+    int cnt = 0;
+    int i = 0;
+    int ans = 0;
+
+    while(cnt != v-1){
+        int a = edge[i].v1;
+        int b = edge[i].v2;
+        if(Find(a) != Find(b)){
+            Union(a, b);
+            cnt++;
+            ans += edge[i].cost;
+        }
+        i++;
+    }
+
+    cout << ans << "\n";
+}
