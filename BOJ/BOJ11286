@@ -1,0 +1,93 @@
+#include <iostream>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+int arr[100001];
+int cnt = 0;
+
+void push(int num) {
+	
+	arr[++cnt] = num;
+
+	int i = cnt;
+
+	while (i != 1) {
+		if (abs(arr[i]) < abs(arr[i / 2])) {
+
+			swap(arr[i], arr[i / 2]);
+			i /= 2;
+		}
+		else if (abs(arr[i]) == abs(arr[i / 2])) {
+			if (arr[i] < arr[i / 2]) {
+
+				swap(arr[i], arr[i / 2]);
+				i /= 2;
+			}
+			else return;
+		}
+		else return;
+	}
+}
+
+void pop() {
+	if (cnt == 0) return;
+
+	arr[1] = arr[cnt];
+	arr[cnt--] = 0;
+
+	int i = 1;
+	while (i <= cnt) {
+		int next = i;
+
+		if (i * 2 <= cnt && abs(arr[i * 2]) <= abs(arr[next])) {
+
+			if (abs(arr[i * 2]) == abs(arr[next])) {
+				if (arr[i * 2] < arr[next]) next = i * 2;
+			}
+			else next = i * 2;
+		}
+
+		if (i * 2 + 1 <= cnt && abs(arr[i * 2 + 1]) <= abs(arr[next])) {
+		
+			if (abs(arr[i * 2 + 1]) == abs(arr[next])) {
+				if (arr[i * 2 + 1] < arr[next]) next = i * 2 + 1;
+			}
+			else next = i * 2 + 1;
+		}
+
+
+		/*if (i * 2 <= cnt && i * 2 + 1 <= cnt && abs(arr[i * 2]) == abs(arr[i * 2 + 1])) {
+			if (abs(arr[i * 2]) < abs(arr[i * 2 + 1])) next = i * 2;
+			else next = i * 2 + 1;
+		}*/
+
+		if (i == next) return;
+
+		swap(arr[i], arr[next]);
+		i = next;
+	}
+}
+
+int main() {
+
+	int n;
+	scanf("%d", &n);
+
+	for (int i = 1; i <= n; i++) {
+		int tmp;
+		scanf("%d", &tmp);
+
+		if (tmp == 0) {
+			if (!arr[1]) printf("%d\n", 0);
+			else {
+				printf("%d\n", arr[1]);
+				pop();
+			}
+		}
+		else {
+			push(tmp);
+		}
+	}
+}
