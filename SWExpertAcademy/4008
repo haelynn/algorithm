@@ -1,0 +1,63 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+int N;
+int number[13];
+int minNum, maxNum;
+
+void Solve(int p, int m, int mul, int dv, string s) {
+	if (p + m + mul + dv == 0) {
+		int sum = number[0];
+		for (int i = 0; i < s.length(); i++) {
+			if (s[i] == '+') {
+				sum += number[i + 1];
+			}
+			if (s[i] == '-') {
+				sum -= number[i + 1];
+			}
+			if (s[i] == '*') {
+				sum *= number[i + 1];
+			}
+			if (s[i] == '/') {
+				sum /= number[i + 1];
+			}
+		}
+
+		maxNum = max(maxNum, sum);
+		minNum = min(minNum, sum);
+	}
+
+	if (p != 0) Solve(p-1, m, mul, dv, s + '+');
+	if (m != 0) Solve(p, m-1, mul, dv, s + '-');
+	if (mul != 0) Solve(p, m, mul-1, dv, s + '*');
+	if (dv != 0) Solve(p, m, mul, dv-1, s + '/');
+}
+
+int main() {
+
+	std::ios::sync_with_stdio(false);
+
+	int T;
+	cin >> T;
+
+	for (int tc = 1; tc <= T; tc++) {
+
+		cin >> N;
+
+		int p, m, mul, dv;
+		cin >> p >> m >> mul >> dv;
+
+		minNum = 1000000000;
+		maxNum = -1000000000;
+
+		for (int i = 0; i < N; i++) cin >> number[i];
+
+		Solve(p, m, mul, dv, "");
+
+		////////
+		cout << "#" << tc << " " << maxNum - minNum <<  "\n";
+	}
+
+}
