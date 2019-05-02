@@ -1,0 +1,49 @@
+#include <iostream>
+#define INF (0x7fffffff)
+
+using namespace std;
+
+int n, m;
+int arr[1001][1001];
+int dist[1001];
+bool visited[1001] = {0, };
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+
+    cin >> n >> m;
+    for(int i=1; i<=n; i++){
+        dist[i] = INF;
+        for(int j=1; j<=n; j++) arr[i][j] = INF;
+    }
+
+    for(int i=0; i<m; i++){
+        int start, end, cost;
+        cin >> start >> end >> cost;
+
+        if(cost < arr[start][end]) arr[start][end] = cost;
+    }
+
+    int s, e, v;
+    cin >> s >> e;
+    dist[s] = 0;
+
+    for(int i=0; i<n-1; i++){
+        int minNum = INF;
+
+        for(int j=1; j<=n; j++){
+            if(!visited[j] && minNum > dist[j]){
+                minNum = dist[j];
+                v = j;
+            }
+        }
+
+        visited[v] = 1;
+        for(int j=1; j<=n; j++){
+            if(arr[v][j] != INF && dist[j] > dist[v] + arr[v][j]) dist[j] = dist[v] + arr[v][j];
+        }
+    }
+
+    cout << dist[e] << "\n";
+}
