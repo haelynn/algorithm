@@ -1,0 +1,94 @@
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+
+int arr[301][301];
+int checked[301][301];
+int dy[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+int dx[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+int n, ans;
+
+int InRange(int y, int x) {
+	int num;
+	if (y >= 0 && x >= 0 && y < n && x < n) num = 1;
+	else num = 0;
+	return num;
+}
+
+void Numbering(int y, int x) {
+
+	int cntBomb = 0;
+	for (int i = 0; i < 8; i++) {
+		int ny = y + dy[i];
+		int nx = x + dx[i];
+
+		if (InRange(ny, nx))
+			if (arr[ny][nx] == '*') cntBomb++;
+	}
+
+	arr[y][x] = cntBomb;
+}
+
+void Checking(int y, int x) {
+
+	checked[y][x] = 1;
+
+	for (int i = 0; i < 8; i++) {
+		int ny = y + dy[i];
+		int nx = x + dx[i];
+
+		if (InRange(ny, nx)) {
+			if (arr[ny][nx] != 0) checked[ny][nx] = 1;
+			if (arr[ny][nx] == 0 && checked[ny][nx] == 0) Checking(ny, nx);
+		}
+	}
+}
+
+int main() {
+	std::ios::sync_with_stdio(false);
+
+	int tc;
+	cin >> tc;
+
+	for (int t = 1; t <= tc; t++) {
+
+		cin >> n;
+		ans = 0;
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+
+				checked[i][j] = 0;
+				char tmp;
+				cin >> tmp;
+				
+				arr[i][j] = tmp;
+				if (arr[i][j] == '*') checked[i][j] = 1;
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (arr[i][j] == '.') Numbering(i, j);
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (!arr[i][j] && !checked[i][j]) {
+					ans++;
+					Checking(i, j);
+				}
+			}
+		}
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++)
+				if (!checked[i][j]) ans++;
+		}
+
+		// output
+		cout << "#" << t << " " << ans << "\n";
+	}
+}
