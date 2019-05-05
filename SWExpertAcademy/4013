@@ -1,0 +1,119 @@
+#include <iostream>
+#include <math.h>
+#include <cstring>
+
+using namespace std;
+
+#define L -1 // 반시계방향
+#define R 1 // 시계방향
+#define N 0
+#define S 1
+
+typedef struct Magnetic {
+	int ans;
+	int left;
+	int right;
+}Magnetic;
+
+Magnetic mag[4];
+int magnetic[4][8];
+int checked[4] = { 0, };
+
+int MakeIdx(int n) {
+
+	if (n > 7) return 0;
+	if (n < 0) return 7;
+	else return n;
+}
+
+void RotationMag(int rotMag, int dir) {
+
+	if (checked[rotMag] == 1) return;
+
+	checked[rotMag] = 1;
+
+	int right = mag[rotMag].right;
+	int left = mag[rotMag].left;
+	int ans = mag[rotMag].ans;
+
+	// cout << rotMag + 1 << " " << magnetic[rotMag][mag[rotMag].left] << " " << magnetic[rotMag][mag[rotMag].ans] << " " << magnetic[rotMag][mag[rotMag].right] << "\n";
+
+	// 회전
+	mag[rotMag].ans = MakeIdx(ans + (dir * -1));
+	mag[rotMag].left = MakeIdx(left + (dir * -1));
+	mag[rotMag].right = MakeIdx(right + (dir * -1));
+
+
+	// 인접한 자석 확인
+
+	if (rotMag == 0) {
+
+		if (checked[rotMag + 1] == 1) return;
+		if (magnetic[rotMag][right] != magnetic[rotMag + 1][mag[rotMag+1].left]) RotationMag(rotMag + 1, dir * -1);
+	}
+	else if (rotMag == 1) {
+
+		if (magnetic[rotMag][left] != magnetic[rotMag - 1][mag[rotMag-1].right]) RotationMag(rotMag - 1, dir*-1);
+		if (magnetic[rotMag][right] != magnetic[rotMag + 1][mag[rotMag+1].left]) RotationMag(rotMag + 1, dir*-1);
+	}
+	else if (rotMag == 2) {
+
+		if (magnetic[rotMag][left] != magnetic[rotMag - 1][mag[rotMag-1].right]) RotationMag(rotMag - 1, dir*-1);
+		if (magnetic[rotMag][right] != magnetic[rotMag + 1][mag[rotMag+1].left]) RotationMag(rotMag + 1, dir*-1);
+	}
+	else if (rotMag == 3) {
+	
+		if (checked[rotMag - 1] == 1) return;
+		if (magnetic[rotMag][left] != magnetic[rotMag - 1][mag[rotMag-1].right])RotationMag(rotMag - 1, dir*-1);
+	}
+
+}
+
+int MakeScore() {
+
+	int ans = 0;
+
+	for (int i = 0; i < 4; i++) {
+		int res = mag[i].ans;
+
+		if (magnetic[i][res] == S) ans += pow(2.0, i);
+	}
+
+	return ans;
+}
+
+int main() {
+
+	std::ios::sync_with_stdio(false);
+
+	int T;
+	cin >> T;
+	
+	for (int t = 1; t <= T; t++) {
+	
+		int k;
+		cin >> k;
+
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 8; j++) {
+				cin >> magnetic[i][j];
+			}
+
+			mag[i].ans = 0;
+			mag[i].left = 6;
+			mag[i].right = 2;
+		}
+
+		while (k--) {
+		
+			int rotMag, dir;
+			cin >> rotMag >> dir;
+
+			memset(checked, 0, sizeof(checked));
+			RotationMag(rotMag - 1, dir);
+		}
+
+	///////
+		cout << "#" << t << " " << MakeScore() << "\n";
+	}
+}
