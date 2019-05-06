@@ -1,0 +1,78 @@
+#include <iostream>
+
+using namespace std;
+
+int main() {
+
+	std::ios::sync_with_stdio(false);
+
+	for (int t = 1; t <= 10; t++) {
+
+		int len;
+		int blockArr[4] = { 0, };
+		bool flag = true;
+
+		cin >> len;
+
+		for (int i = 0; i < len; i++) {
+			char openChar;
+			cin >> openChar;
+
+			switch (openChar) {
+				case '(':
+					blockArr[0]++;
+					break;
+
+				case '[':
+					blockArr[1]++;
+					break;
+
+				case '{':
+					blockArr[2]++;
+					break;
+
+				case '<':
+					blockArr[3]++;
+					break;
+					/////
+
+				case ')':
+					if (!blockArr[0])
+						flag = false;
+
+					else blockArr[0]--;
+					break;
+
+				case ']':
+					if (!blockArr[1])
+						flag = false;
+
+					else blockArr[1]--;
+					break;
+
+				case '}':
+					if (!blockArr[2])
+						flag = false;
+
+					else blockArr[2]--;
+					break;
+
+				case '>':
+					if (!blockArr[3])
+						flag = false;
+
+					else blockArr[3]--;
+					break;
+			}
+		}
+
+		if (flag) {
+			for (int i = 0; i < 4; i++) {
+				if (blockArr[i] > 0)
+					flag = false;
+			}
+		}
+
+		cout << "#" << t << " "  << flag << "\n";
+	}
+}
