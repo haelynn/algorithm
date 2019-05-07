@@ -1,0 +1,147 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+typedef struct micro {
+	int dir;
+	int cnt;
+	int maxCnt;
+}micro;
+
+int dy[5] = { 0, -1, 1, 0, 0 };
+int dx[5] = { 0, 0, 0, -1, 1 };
+int n, m, k;
+int checked[101][101];
+micro arr[101][101], hourArr[101][101];
+
+bool InRedZone(int y, int x) {
+
+	if (y == 0 || y == n - 1 || x == 0 || x == n - 1) return true;
+	else return false;
+}
+
+void MicroInit() {
+	
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			arr[i][j].cnt = 0; arr[i][j].dir = 0; arr[i][j].maxCnt = 0;
+			hourArr[i][j].cnt = 0; hourArr[i][j].dir = 0; hourArr[i][j].maxCnt = 0;
+		}
+	}
+}
+
+void Solve() {
+	
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			
+			if (arr[i][j].cnt != 0) {
+			
+				int ny = i + dy[arr[i][j].dir];
+				int nx = j + dx[arr[i][j].dir];
+
+				if (!checked[ny][nx]) { // 처음 방문하는 미생물
+					checked[ny][nx] = 1;
+
+					hourArr[ny][nx].cnt = arr[i][j].cnt;
+					hourArr[ny][nx].dir = arr[i][j].dir;
+					hourArr[ny][nx].maxCnt = arr[i][j].cnt;
+
+				}
+				else { // 이미 미생물이 있을 때
+					hourArr[ny][nx].cnt += arr[i][j].cnt;
+					
+					if (arr[i][j].cnt > hourArr[ny][nx].maxCnt) {
+						hourArr[ny][nx].maxCnt = arr[i][j].cnt;
+						hourArr[ny][nx].dir = arr[i][j].dir;
+					}
+
+				}
+			}
+
+		}
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+
+			if (InRedZone(i, j)) { // red zone 처리
+				hourArr[i][j].cnt /= 2;
+
+				if (hourArr[i][j].cnt != 0) { // 방향 전환
+					if (hourArr[i][j].dir % 2 == 0) hourArr[i][j].dir--;
+					else hourArr[i][j].dir++;
+				}
+				else hourArr[i][j].dir = 0;
+
+			}
+
+			arr[i][j].cnt = hourArr[i][j].cnt;
+			arr[i][j].dir = hourArr[i][j].dir;
+			arr[i][j].maxCnt = hourArr[i][j].cnt;
+
+			hourArr[i][j].cnt = 0; hourArr[i][j].dir = 0; hourArr[i][j].maxCnt = 0;
+		
+		}
+	}
+
+}
+
+int CntMicro() {
+
+	int cnt = 0;
+	
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+
+			if (arr[i][j].cnt != 0) cnt += arr[i][j].cnt;
+
+		}
+	}
+
+	return cnt;
+}
+
+int main() {
+
+	std::ios::sync_with_stdio(false);
+	
+	int T;
+	cin >> T;
+
+	for (int t = 1; t <= T; t++) {
+
+		cin >> n >> m >> k;
+
+		MicroInit();
+
+		for (int i = 0; i < k; i++) {
+
+			int y, x, cnt, dir;
+			cin >> y >> x >> cnt >> dir;
+
+			arr[y][x].cnt = cnt;
+			arr[y][x].maxCnt = cnt;
+			arr[y][x].dir = dir;
+		}
+
+		for (int i = 0; i < m; i++) {
+
+			memset(checked, 0, sizeof(checked));
+			Solve();
+
+			/*for (int l = 0; l < n; l++) {
+				for (int j = 0; j < n; j++) {
+					printf("%3d ", arr[l][j].cnt);
+				}
+				cout << "\n";
+			}*/
+		}
+
+		cout << "#" << t << " " << CntMicro() << "\n";
+
+
+		////////////////////
+	}
+}
