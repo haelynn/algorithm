@@ -1,0 +1,149 @@
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+
+int arr[16][16];
+bool checked[16][16];
+int dy[4] = { -1, 1, 0, 0 };
+int dx[4] = { 0, 0, -1, 1 };
+int startX, startY;
+int endX, endY;
+
+typedef struct Node {
+	int data;
+	struct Node *next;
+}Node;
+
+typedef struct Queue {
+	Node *front;
+	Node *rear;
+	int count;
+}Queue;
+
+void InitQueue(Queue *q);
+int IsEmpty(Queue *q);
+void Enqueue(Queue *q, int data);
+int Dequeue(Queue *q);
+
+void UserInput() {
+
+	// input
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			checked[i][j] = false;
+
+			char tmp;
+			cin >> tmp;
+			
+			arr[i][j] = tmp - '0';
+
+			if (arr[i][j] == 2) {
+				startX = i;
+				startY = j;
+			}
+
+			else if (arr[i][j] == 3) {
+				endX = i;
+				endY = j;
+			}
+
+			else if (arr[i][j] == 1)
+				checked[i][j] = true;
+		}
+	}
+}
+
+bool InRange(int x, int y) {
+	if (x >= 0 && y >= 0 && x < 16 && y < 16) return true;
+	else return false;
+}
+
+int main() {
+	std::ios::sync_with_stdio(false);
+
+	int t = 0;
+
+
+	while (t < 10) {
+
+		cin >> t;
+		UserInput();
+
+		Queue qX, qY;
+		InitQueue(&qX);
+		InitQueue(&qY);
+
+		Enqueue(&qX, startX);
+		Enqueue(&qY, startY);
+		checked[startY][startX] = true;
+
+		int flag = 0;
+		while (qX.count != 0 && qY.count != 0) {
+			int frontX = Dequeue(&qX);
+			int frontY = Dequeue(&qY);
+
+			for (int i = 0; i < 4; i++) {
+				int nextX = frontX + dx[i];
+				int nextY = frontY + dy[i];
+
+				if (InRange(nextX, nextY) && !checked[nextY][nextX]) {
+					if (arr[nextY][nextX] == 3) {
+						flag = 1;
+						break;
+					}
+					else {
+						Enqueue(&qX, nextX);
+						Enqueue(&qY, nextY);
+						checked[nextY][nextX] = true;
+					}
+				}
+			}
+
+			if (flag) break;
+		}
+
+		cout << "#" << t << " "  << flag << "\n";
+	}
+}
+
+void InitQueue(Queue *q) {
+	q->front = q->rear = NULL;
+	q->count = 0;
+}
+
+int IsEmpty(Queue *q) {
+	return q->count == 0;
+}
+
+void Enqueue(Queue *q, int data) {
+	Node *now = (Node *)malloc(sizeof(Node));
+	now->data = data;
+	now->next = NULL;
+
+	if (IsEmpty(q))
+		q->front = now;
+
+	else
+		q->rear->next = now;
+
+	q->rear = now;
+	q->count++;
+}
+
+int Dequeue(Queue *q) {
+	int re = 0;
+	Node *now;
+
+	if (IsEmpty(q)) {
+		return re;
+	}
+
+	now = q->front;
+	re = now->data;
+	q->front = now->next;
+	free(now);
+	q->count--;
+
+	return re;
+}
