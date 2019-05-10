@@ -1,0 +1,194 @@
+#include <iostream>
+#include <queue>
+#include <cstring>
+
+using namespace std;
+
+int N, M, R, C, L; // R-세로, C-가로, L-시간
+int arr[51][51];
+int checked[51][51];
+int dx[4] = { 0, 0, -1, 1 }; // 위, 아래, 왼, 오
+int dy[4] = { -1, 1, 0, 0 };
+
+bool InRange(int y, int x) {
+
+	if (y >= 0 && x >= 0 && y < N && x < M) return true;
+	else return false;
+}
+
+bool CheckMove(int currentState, int nextState, int dir) {
+	// dir 0 위 / 1 아래 / 2 왼 / 3 오
+
+	switch (currentState) {
+	case 1:
+		if (dir == 0) {
+			if (nextState == 1 || nextState == 2 || nextState == 5 || nextState == 6) return true;
+		}
+		else if (dir == 1) {
+			if (nextState == 1 || nextState == 2 || nextState == 4 || nextState == 7) return true;
+		}
+		else if (dir == 2) {
+			if (nextState == 1 || nextState == 3 || nextState == 4 || nextState == 5) return true;
+		}
+		else if (dir == 3) {
+			if (nextState == 1 || nextState == 3 || nextState == 6 || nextState == 7) return true;
+		}
+		break;
+	case 2:
+		if (dir == 0) {
+			if (nextState == 1 || nextState == 2 || nextState == 5 || nextState == 6) return true;
+		}
+		else if (dir == 1) {
+			if (nextState == 1 || nextState == 2 || nextState == 4 || nextState == 7) return true;
+		}
+		else if (dir == 2) {
+			return false;
+		}
+		else if (dir == 3) {
+			return false;
+		}
+		break;
+	case 3:
+		if (dir == 0) {
+			return false;
+		}
+		else if (dir == 1) {
+			return false;
+		}
+		else if (dir == 2) {
+			if (nextState == 1 || nextState == 3 || nextState == 4 || nextState == 5) return true;
+		}
+		else if (dir == 3) {
+			if (nextState == 1 || nextState == 3 || nextState == 6 || nextState == 7) return true;
+		}
+		break;
+	case 4:
+		if (dir == 0) {
+			if (nextState == 1 || nextState == 2 || nextState == 5 || nextState == 6) return true;
+		}
+		else if (dir == 1) {
+			return false;
+		}
+		else if (dir == 2) {
+			return false;
+		}
+		else if (dir == 3) {
+			if (nextState == 1 || nextState == 3 || nextState == 6 || nextState == 7)return true;
+		}
+		break;
+	case 5:
+		if (dir == 0) {
+			return false;
+		}
+		else if (dir == 1) {
+			if (nextState == 1 || nextState == 2 || nextState == 4 || nextState == 7) return true;
+		}
+		else if (dir == 2) {
+			return false;
+		}
+		else if (dir == 3) {
+			if (nextState == 1 || nextState == 3 || nextState == 6 || nextState == 7) return true;
+		}
+		break;
+	case 6:
+		if (dir == 0) {
+			return false;
+		}
+		else if (dir == 1) {
+			if (nextState == 1 || nextState == 2 || nextState == 4 || nextState == 7) return true;
+		}
+		else if (dir == 2) {
+			if (nextState == 1 || nextState == 3 || nextState == 4 || nextState == 5) return true;
+		}
+		else if (dir == 3) {
+			return false;
+		}
+		break;
+	case 7:
+		if (dir == 0) {
+			if (nextState == 1 || nextState == 2 || nextState == 5 || nextState == 6) return true;
+		}
+		else if (dir == 1) {
+			return false;
+		}
+		else if (dir == 2) {
+			if (nextState == 1 || nextState == 3 || nextState == 4 || nextState == 5) return true;
+		}
+		else if (dir == 3) {
+			return false;
+		}
+		break;
+	}
+
+	return false;
+}
+
+int Solve() {
+	
+	queue <pair<int, int> > q;
+	memset(checked, 0, sizeof(checked));
+
+	checked[R][C] = 1;
+
+	q.push({ R, C });
+
+	while (!q.empty()) {
+
+		int fy = q.front().first;
+		int fx = q.front().second;
+
+		//if (checked[fy][fx] > L) break;
+
+		q.pop();
+
+		for (int i = 0; i < 4; i++) {
+			int ny = fy + dy[i];
+			int nx = fx + dx[i];
+
+
+			if (arr[ny][nx] && checked[ny][nx] == 0 && InRange(ny, nx) && CheckMove(arr[fy][fx], arr[ny][nx], i)) {
+				checked[ny][nx] = checked[fy][fx] + 1;
+				q.push({ ny, nx });
+			}
+		}
+	}
+
+	/*cout << "\n";
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++)
+			cout << checked[i][j] << " ";
+
+		cout << "\n";
+	}*/
+
+	int cnt = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++)
+			if (checked[i][j] > 0 && checked[i][j] <= L) cnt++;
+	}
+
+	return cnt;
+}
+
+int main() {
+
+	std::ios::sync_with_stdio(false);
+
+	int T;
+	cin >> T;
+
+	for (int tc = 1; tc <= T; tc++) {
+
+		// input
+		cin >> N >> M >> R >> C >> L;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				cin >> arr[i][j];
+			}
+		}
+
+		/////////
+		cout << "#" << tc << " " << Solve() << "\n";
+	}
+}
